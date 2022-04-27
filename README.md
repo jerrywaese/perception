@@ -6,7 +6,7 @@ During initialization the script builds a million neurons both modeling cortical
 After any of a number of images are loaded they are rendered as activated neurons and nearby pyramidal neurons build spines on active neurons that they connect with.
 Then partial perception is randomly enabled using a portion of the original image which becomes a pattern of active cortical neurons, and the script activates pyramidals in that  active portion, and where 3 or more of these pyramidals branches reach a resting cortical neuron it is reactivated.
 In this way much of the whole original image is reactivated.
-Right clicking shows the branches that have contributed to a reactivated position on the screen and left clicking shows a pyramidal neurons's activev branches.<p/>
+Right clicking shows the branches that have contributed to a reactivated position on the screen and left clicking shows a pyramidal neurons's active branches.<p/>
 <img src="branches.png"/>
 <br/>
 The code is written using biological terms as names of functions and arrays.
