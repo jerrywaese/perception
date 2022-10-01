@@ -35,7 +35,7 @@
 
   <body onload="doBodyLoad();">
     <div class="page">
-      version 1.063 - Sept. 30 2022  with short term memory effect
+      version 1.064 - Sept. 31 2022  
       <main>
         <div id="leftside" >  
           <span id="OpticSpeedLayers">Visual High Speed Cortex Preprocess</span>
@@ -152,13 +152,8 @@
           <img src="images.png"/> <table><tr><td id="samp1" width=66px height=3px></td><td id="samp2" width=66px height=3px></td><td id="samp3" width=66px height=3px></td><td id="samp4" width=66px height=3px bgcolor="teal"></td><td id="samp5"  width=66px height=3px></td><td id="samp6" width=66px height=3px></td><td width=66px height=3px id="samp7" ></td><td width=66px height=3px id="samp8" ></td></tr></table>
         </div>
         <div id="hidefieldcon">
-          <button id="hideFields" onclick="hideFields();">Show fields</button><br/>
-          <button id="skipFields" onclick="skipFields();">Skip fields</button>
-        
-          
-
-         
-          
+          <button id="hideFields" title="This button displays the field interference overlay. " onclick="hideFields();">Show fields</button><br/>
+          <button id="skipFields" title="If you skip fields the progressive perception is not as good." onclick="skipFields();">Skip fields</button> 
         </div>
       </main>
     </div>
@@ -202,8 +197,6 @@
       var zoneX=0,zoneY=0,zoneDx=17,zoneDy=17;// granularity for ephaptic activation grid 
       var hitsPerZone=1;//preset for active cNeuron zones of zoneDx * zoneDy neurons to begin concentric field effect
       var radiusField=13;
-      var clickPyrText="Click above for Pyramidal branches from (toggle)";
-
       var perceptionTestextent=150;// the square sample of the sensed image
       var whiteBlackGreyTreshold=50;
       var mask = [[0, -1, -1], [0, 0, 0], [1, 1, 0]];  //part of preprocess (eg. emboss effect)
@@ -217,11 +210,11 @@
       function doBodyLoad(){
         document.getElementById("under_Cortex").addEventListener("click",function(event){ 
           var inText=document.getElementById("under_Cortex").innerHTML;
-          if(inText.includes("Click above for Pyramidal branches from (toggle)")){
-            document.getElementById("under_Cortex").innerHTML="Click above for Pyramidal branches to (toggle)";
+          if(inText.includes("Click above for Pyramidal branches from")){
+            document.getElementById("under_Cortex").innerHTML="Click above for Pyramidal branches to";
           }
           else {
-            document.getElementById("under_Cortex").innerHTML="Click above for Pyramidal branches from (toggle)";
+            document.getElementById("under_Cortex").innerHTML="Click above for Pyramidal branches from";
           }
         },false);
         document.getElementById("imgSelector").addEventListener("click",function(event){  
@@ -986,6 +979,7 @@
 
                 corticalCanvas.addEventListener("click",function(event){  
                   //code not reaching corticalCanvas due to processCanvas covering see next set of handlers
+                  
                     var cX=event.clientX;
                     var cY=event.clientY;
                     var pixelData = corticalCtx.getImageData(cX, cY, 1, 1).data; 
@@ -993,15 +987,17 @@
                     var mY=   cY-cOffY;
                     var inText=document.getElementById("under_Cortex").innerHTML;
                    
-                    if(inText.includes("Click above for Pyramidal branches from (toggle)")){
+                    if(inText.includes("Click above for Pyramidal branches from")){
                       nowSay('from point x='+(mX)+' point y='+(mY)+ " pyram neuron(s) "+ getpyramidalNeuronAt(mX,mY));  
                     }
                     else {
                       nowSay('to point x='+(mX)+' point y='+(mY)+ " cortical neuron "+ getCorticalNeuronAt(mX,mY));  
-                    }                                     
+                    }     
+                                                   
                 },false);
                 corticalCanvas.addEventListener("contextmenu",function(event){ 
                   //code not reaching corticalCanvas due to processCanvas covering see next set of handlers
+                 
                     var cX=event.clientX;
                     var cY=event.clientY;
                     var pixelData = corticalCtx.getImageData(cX, cY, 1, 1).data; 
@@ -1009,7 +1005,8 @@
                     var mY=   cY-cOffY;
                     nowSay('to point x='+(mX)+' point y='+(mY)+ " cortical neuron "+ getCorticalNeuronAt(mX,mY));  
                     event.preventDefault(); 
-                    return true;                
+                    return true;  
+                                 
                 },false);
                 processCanvas.addEventListener("click",function(event){  
                     var cX=event.clientX;
@@ -1020,7 +1017,7 @@
 
                     var inText=document.getElementById("under_Cortex").innerHTML;
                    
-                    if(inText.includes("Click above for Pyramidal branches from (toggle)")){
+                    if(inText.includes("Click above for Pyramidal branches from")){
                       nowSay('from point x='+(mX)+' point y='+(mY)+ " pyram neuron(s) "+ getpyramidalNeuronAt(mX,mY));  
                     }
                     else {
@@ -1099,13 +1096,13 @@
 
 
       function hideFields(){
-        if(processCanvas.style.display!="none"){
-          processCanvas.style.display="none";
-          document.getElementById("hideFields").innerText="Show fields";
-        }
-        else{
+        if(processCanvas.style.display=="none"){
           processCanvas.style.display="block";
           document.getElementById("hideFields").innerText="Hide fields";
+        }
+        else{
+          processCanvas.style.display="none";
+          document.getElementById("hideFields").innerText="Show fields";
         }
       }
 
