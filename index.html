@@ -35,7 +35,7 @@
 
   <body onload="doBodyLoad();">
     <div class="page">
-      version 1.064 - Sept. 31 2022  
+      version 1.066 - Oct. 1 2022  
       <main>
         <div id="leftside" >  
           <span id="OpticSpeedLayers">Visual High Speed Cortex Preprocess</span>
@@ -51,9 +51,9 @@
             A simulation of an image being preprocessed and then sensed, retained, and perceived 
             in a synchronous neural association network. 
             You can initiate perception from a square sample by clicking in the left Cortex Preprocess area. 
-            You can change the sensory input to any image in the row below the simulation. 
-            Click inside Associative Cortex area to see active branches coming <B>to</B> a (yellow) active neuron, or branches emerging <B>from</B> an activated pyramidal neuron marked in light magenta.   
-            Global Variables (like the size of the test sample) can be edited by clicking below, including the preprocess matrix which affects images as they load. Note sampling some parts of image are more or less significant to perception.
+            You can change the sensory input to any image in the row of images below the simulation. Short Term memory settings affect image overlapping. 
+            Click inside Associative Cortex area to see active pyramidal axon branches coming <B>to</B> a (yellow) active neuron, or branches emerging <B>from</B> an activated pyramidal neuron (hidden among dense groups of neurons).   
+            Global Variables (like the size of the test sample) can be edited below, including the preprocess matrix which affects images as they load. 
           </div>
           <div id="messageArea">
             <h2 id="mess" >hi</h2>
@@ -126,15 +126,15 @@
               </table>
             </td>
           </tr>
-        </table>
+        </table><br/><br/><br/><br/><br/><br/>
         Other Global Variables should be changed only at the code level as they affect the amount of memory the page requires,<br/>
         such as the number of branches capable of linking Cortical neurons per Pyramidal neuron (1024 in this version),<br/>
         and the ratio of branching Pyramidal Neurons embedded in the Cortical Neuron Population (1 P per 5 C in this version).<br/>
         Based upon 300x300 cortical neurons = 90,000 there are 18,000 pyramidals with 18,432,000 total connections in this demo<br/><br/>
         <br/><br/><br/>
-        This demo implements hypothalamic suppression modelling which can suppress *TOPDOWN* current active mental events and enable more refined/restricted recognition. It also does not YET model short term memory, which would involve distinguising between recent cortical activations and resting neurons that were not recently activated.
+        This demo implements hypothalamic suppression modelling during image selection which suppresses *TOPDOWN* current active mental events (i.e. the perceptive reflex content) and enables more refined subsequent focussed recognition. (Focussing involves suppression of reflex perception).
         <br/><br/>
-        This demo is a simulation for some of the ideas promoted in my earlier paper 
+        This work implements a simulation for some of the ideas suggested in my earlier paper 
         <a href="https://www.researchgate.net/publication/359636101_Associative_Memory_Formation_and_Perception_A_Consideration_of_How_Ephaptic_Cortical_Field_Interference_Excites_Branched_Pyramidal_Neuron_Axons_to_Link_with_Synchronously_Activated_Primary_Cortical_Se" target="_blank">
           Associative Memory Formation and Perception</a> 
          posted in  March 2022; although references to ephaptic field interference are superceded with a simpler approach.  <br/><br/>
@@ -313,9 +313,9 @@
             }
           }
           sensoryCtx.putImageData(imgData, 0, 0);
+              
           setTimeout(cortexPrepNewImage,delayMin);
       }
-
       function convertyellowtored(){         
           for(var i=0;i<theDataLength;i+=4){
             if( imgData.data[i]==255&&imgData.data[i+1]==255){imgData.data[i+1]=0;}           
@@ -398,7 +398,7 @@
         else{
           nowSay("The activated neurons are shown in yellow, where "+branchesReq4Perception+" or more spines were activated");
           showActiveCorticalNeurons();
-          showImageTestInterface("block");         
+          setTimeout(showNewImageInterface(),delayMin);      
         }
       }
       
@@ -837,6 +837,7 @@
           imgData.data[i+3]=255;//overlay
         }       
         corticalCtx.drawImage(sensoryCanvas,0,0,gridWidth,gridHeight,0,0,gridWidth,gridHeight);
+        
         nowSay(stuff + " - Cortical neurons showing marks in yellow len="+theDataLength);
       }
 
@@ -1299,8 +1300,14 @@
             ImDat2.data[4*(x )+gridWidth*4*(y )+3] = 255; 
           }  
         }  
-        sensoryCtx.putImageData(ImDat2, 0, 0);  
-        imgData = sensoryCtx.getImageData(0, 0, gridWidth, gridHeight);        
+        //sensoryCtx.putImageData(ImDat2, 0, 0);  Filter out the edge artifacts
+        sensoryCtx.fillStyle="black";
+        sensoryCtx.fillRect(0,0,gridWidth,gridHeight);        
+
+        sensoryCtx.putImageData(ImDat2, 3, 3, 3, 3, gridWidth-4, gridHeight-4) ;
+
+        imgData = sensoryCtx.getImageData(0, 0, gridWidth, gridHeight);    
+              
         
         setTimeout(convertToWhiteBlack,delayMin);
       } 
