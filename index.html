@@ -128,9 +128,9 @@
           </tr>
         </table><br/><br/><br/><br/><br/><br/>
         Other Global Variables should be changed only at the code level as they affect the amount of memory the page requires,<br/>
-        such as the number of branches capable of linking Cortical neurons per Pyramidal neuron (1024 in this version),<br/>
+        such as the number of branches capable of linking Cortical neurons per Pyramidal neuron (2048 in this version),<br/>
         and the ratio of branching Pyramidal Neurons embedded in the Cortical Neuron Population (1 P per 5 C in this version).<br/>
-        Based upon 300x300 cortical neurons = 90,000 there are 18,000 pyramidals with 18,432,000 total connections in this demo<br/><br/>
+        Based upon 300x300 cortical neurons = 90,000 there are 18,000 pyramidals with 36,864,000 total connections in this demo<br/><br/>
         <br/><br/><br/>
         This demo implements hypothalamic suppression modelling during image selection which suppresses *TOPDOWN* current active mental events (i.e. the perceptive reflex content) and enables more refined subsequent focussed recognition. (Focussing involves suppression of reflex perception).
         <br/><br/>
@@ -176,7 +176,7 @@
       var pyramidalNeurons=[];//modelling pyramidal neurons
       var selectedImage=3;//this is *following* the hardcoded start up - refactor startup to make this a true config item (i.e. by cookies)
       var selectedImages=[];
-      var nPyramidalBranches=1024;//1024;//preset per pNeuron enabling min 2 spines for cNeuron re-activation from branches from pyramidal (i.e. top down)
+      var nPyramidalBranches=2048;//1024;//preset per pNeuron enabling min 2 spines for cNeuron re-activation from branches from pyramidal (i.e. top down)
       var ratioCortical2Pyramidal=5;//was 5 for max pyramidalNeurons preset for ratio of corticalNeurons to pyramidalNeurons 3 is quite slow to initialize.
      
       var mustPercieve=0;// 
@@ -910,7 +910,7 @@
         processCtx = processCanvas.getContext('2d');
         initializeBrainScreen();  
        //document.getElementById("key1").innerHTML="Initializing Neurons Please Wait";
-        nowSay("Now creating a hundred thousand neurons and more than eighteen million axon branches. Please wait a few more seconds.");            
+        nowSay("Now creating a hundred thousand neurons and more than 36 million axon branches. Please wait a few more seconds.");            
         setTimeout(InitialActivationofCorticalNeurons,200);  
       }//end initialize function
 
