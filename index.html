@@ -35,7 +35,7 @@
 
   <body onload="doBodyLoad();">
     <div class="page">
-      version 1.066 - Oct. 1 2022  
+      version 1.070 - Oct. 3 2022  
       <main>
         <div id="leftside" >  
           <span id="OpticSpeedLayers">Visual High Speed Cortex Preprocess</span>
@@ -174,14 +174,14 @@
       var theDataLength;
       var corticalNeurons=[];//modelling cortical neurons
       var pyramidalNeurons=[];//modelling pyramidal neurons
-      var selectedImage=3;
+      var selectedImage=3;//this is *following* the hardcoded start up - refactor startup to make this a true config item (i.e. by cookies)
       var selectedImages=[];
-      var nPyramidalBranches=1024;//preset per pNeuron enabling min 2 spines for cNeuron re-activation from branches from pyramidal (i.e. top down)
+      var nPyramidalBranches=1024;//1024;//preset per pNeuron enabling min 2 spines for cNeuron re-activation from branches from pyramidal (i.e. top down)
       var ratioCortical2Pyramidal=5;//was 5 for max pyramidalNeurons preset for ratio of corticalNeurons to pyramidalNeurons 3 is quite slow to initialize.
      
       var mustPercieve=0;// 
       
-      var branchesReq4Perception=6;
+      var branchesReq4Perception=7;
            //used in tryPerception to promote a resting neuron to active state
      
       var SpinesAdded=0;
@@ -193,7 +193,7 @@
       var cOffY=50;//padding of the body tag
       var offsetx=cOffX;//preset for demo which is 350 px to the right  
 
-      var mustPercieveSeries=4;//progressive perception proximity zone
+      var mustPercieveSeries=4;//progressive perception 
       var zoneX=0,zoneY=0,zoneDx=17,zoneDy=17;// granularity for ephaptic activation grid 
       var hitsPerZone=1;//preset for active cNeuron zones of zoneDx * zoneDy neurons to begin concentric field effect
       var radiusField=13;
@@ -265,12 +265,12 @@
         
       }
       
-      function freshTime()      {
+      function freshTime()      {//the beginning of sensation
         var da = new Date();
         eventTime=da.getTime();    
         for (var a=0;a<corticalNeurons.length;a++){
           if(corticalNeurons[a].spines.length>1){
-            if((eventTime-corticalNeurons[a].time)>ShortTermMemoryCutoff){
+            if((eventTime-corticalNeurons[a].time)>ShortTermMemoryCutoff){//neuron should fade from short term cluster
               corticalNeurons[a].shortTerm=0;
             }
             else {
@@ -312,8 +312,7 @@
               imgData.data[i]=255;imgData.data[i+1]=255;imgData.data[i+2]=255;
             }
           }
-          sensoryCtx.putImageData(imgData, 0, 0);
-              
+          sensoryCtx.putImageData(imgData, 0, 0);              
           setTimeout(cortexPrepNewImage,delayMin);
       }
       function convertyellowtored(){         
@@ -378,13 +377,13 @@
         return 0;
       }
 
-      function showImageTestInterface(how){
+      function enableTestingPerception(how){//allow change of image or testing of current image
         document.getElementById("imgSelector").style.display=how;
         document.getElementById("under_input").style.display=how;
         document.getElementById("under_Cortex").style.display=how;
-        if(how){GTopDownON=1;}
+        if(how=="none"){GTopDownON=1;}// this effectively permits perception to resume, the attention focus has relaxed
         else{GTopDownON=0;}
-        indicateTopDown();
+        //indicateTopDown();//while building the topdown software articulation
       }
 
       function showAllActivePyramidalBranchEnds(){        
@@ -413,7 +412,7 @@
       function doPerceptionTest(offsetStartx,offsetStarty){
         //copy the zone
         updateTestParameters(offsetStartx,offsetStarty);
-        showImageTestInterface("none"); 
+        enableTestingPerception("none"); 
         imgData = sensoryCtx.getImageData(0, 0, gridWidth, gridHeight); 
         corticalCtx.fillStyle="white";
         corticalCtx.fillRect(0, 0, gridWidth, gridHeight);
@@ -435,7 +434,7 @@
       }
 
       function showNewImageInterface(){
-        showImageTestInterface("block");        
+        enableTestingPerception("block");        
       }
       
       function deactivateAllSpines(notSignal){
@@ -451,8 +450,7 @@
         deactivateAllSpines(0);        
         for (var a=0;a<pyramidalNeurons.length;a++){
           pyramidalNeurons[a].active=0;
-        }
-        //simulateThalamicProjection("New Image Activating");   //moved this to prevent relearning same image    
+        }       
         for (var a=0;a<pyramidalNeurons.length;a++){
           for (var j=0;j<nPyramidalBranches;j++){
             if(pyramidalNeurons[a].branches[j].activeSpine>0){
@@ -502,10 +500,7 @@
         processCtx.putImageData(imgData, 0, 0); 
       }
       function showActiveCorticalNeurons(){
-        //here you can probably first copy to the process layer, THEN CLEAR and perform this set
-        //but if that does not work, then push all of this into the process layer as an overlay and remove opacity style
-//copy to processCtx
-          imgData = corticalCtx.getImageData(0, 0, gridWidth, gridHeight);          
+        imgData = corticalCtx.getImageData(0, 0, gridWidth, gridHeight);          
           for(var i=0;i<theDataLength;i+=4){
             if( imgData.data[i]==0&&imgData.data[i+1]==0){imgData.data[i+3]=0;} //txparent the blacks so we can see through without dimming      
           }
@@ -514,15 +509,15 @@
         clearCorticalCtx();
 //end first attempt
         corticalCtx.lineWidth = 2;
-        corticalCtx.strokeStyle = 'rgba(255,255,200,1)';
+        corticalCtx.strokeStyle = 'rgba(255,255,0,1)';
         for (var i = 0; i <corticalNeurons.length; i++) {
-           if(corticalNeurons[i].active &&!corticalNeurons[i].topDown ){   
+           if(corticalNeurons[i].active &&!corticalNeurons[i].topDown ){   //do topdowns - percepts in other color pink
             corticalCtx.beginPath();
             corticalCtx.arc(corticalNeurons[i].x, corticalNeurons[i].y, 1, 0,0.25* Math.PI);
             corticalCtx.stroke();           
           }
         }
-        corticalCtx.strokeStyle = 'rgba(255,255,0,1)';
+        corticalCtx.strokeStyle = 'rgba(255,200,200,1)';//pink
         for (var i = 0; i <corticalNeurons.length; i++) {
            if(corticalNeurons[i].topDown ){   
             corticalCtx.beginPath();
@@ -787,24 +782,16 @@
             });
           }
           synapseCount=corticalNeurons[neuronID].synapses.length;
-          var debugging='my name';
           //we can modify for short term memory halfing the trigger but can get more sophisticated
-          if((corticalNeurons[neuronID].shortTerm && synapseCount>=(branchesReq4Perception/2))||synapseCount>=branchesReq4Perception){   
-            /*
-            if(corticalNeurons[neuronID].shortTerm && synapseCount>=(branchesReq4Perception/2)) {
-              var JerryIs=debugging;
-            }  
-            */      
-            corticalNeurons[neuronID].active=1; 
-            //corticalNeurons[neuronID].shortTerm=1;//making the current active as responsive as recent
-            //this is perceptive reflex    
+          if((corticalNeurons[neuronID].shortTerm && synapseCount>((branchesReq4Perception/2) -1))//easier to activate fresh or recently active
+              ||synapseCount>=branchesReq4Perception){                  
+            corticalNeurons[neuronID].active=1;   //this here is the perceptive reflex    
             corticalNeurons[neuronID].topDown=1;  
             corticalNeurons[neuronID].time= eventTime;   
             for(k=0;k<synapseCount;k++){
               corticalNeurons[neuronID].synapses.pop();
             }             
-          }
-          
+          }          
         }
       }
       
@@ -820,25 +807,24 @@
       }   
 
       function simulateThalamicProjection(stuff){//activate cortical neurons graphically
-        //this function will be replaced by Thalamic Object Behavior in future development
-        
+        //this function simulates Thalamic Object Behavior affecting the cortical neuron dendritic trees       
         imgData = sensoryCtx.createImageData(gridWidth, gridHeight);
-        var idex=0;
+        var idex=0; var activeCount=0;
         for (var i = 0; i <theDataLength; i += 4) {
           var myIndex=idex++;
           var activeN=corticalNeurons[myIndex++].active;
           if(activeN>0){
             activeN=255;
-            corticalNeurons[myIndex].shortTerm=1;//making the current active as responsive as recent
+            corticalNeurons[myIndex].shortTerm=1;//FRESH - making the current active as responsive as recent
+            activeCount++;
           }
           imgData.data[i]=activeN;
-          imgData.data[i+1]=activeN;//yellow is on red and green
+          imgData.data[i+1]=activeN;//yellow is on red + green full
           imgData.data[i+2]=0;
           imgData.data[i+3]=255;//overlay
         }       
-        corticalCtx.drawImage(sensoryCanvas,0,0,gridWidth,gridHeight,0,0,gridWidth,gridHeight);
-        
-        nowSay(stuff + " - Cortical neurons showing marks in yellow len="+theDataLength);
+        corticalCtx.drawImage(sensoryCanvas,0,0,gridWidth,gridHeight,0,0,gridWidth,gridHeight);       
+        nowSay(stuff + " - Cortical neurons showing marks in yellow -actives="+activeCount);
       }
 
       function setUpCortexActivation(){
@@ -895,12 +881,14 @@
                 y:corticalNeurons[CNID].y    
               });
           }
+          ///test to see if redundancy is a problem
+          /*
           for (var j=0;j<nPyramidalBranches;j++){
             var  CNID=pyramidalNeurons[i].branches[j].cNeuronId;
             if(isBranchAmongBranches(i,CNID)) {
               pyramidalNeurons[i].branches[j].cNeuronId=-1;
             } 
-          }
+          }*/
         } 
       }
 
@@ -1311,7 +1299,40 @@
         
         setTimeout(convertToWhiteBlack,delayMin);
       } 
- 
+      //cookie code from allygap
+      function Get_Cookie( name ) {
+          var start = document.cookie.indexOf( name + "=" );
+          var len = start + name.length + 1;
+          if ( ( !start ) && ( name != document.cookie.substring( 0, name.length ) ) ) {
+              return null;
+          }
+          if ( start == -1 ) return null;
+          var end = document.cookie.indexOf( ";", len );
+          if ( end == -1 ) end = document.cookie.length;     //console.log("get cookie for "+name);
+          return ( document.cookie.substring( len, end ) );
+      }
+      function Set_Cookie( name, value )  {
+          var expires=100;
+          var path=  '/';
+          var domain= '';
+          var secure= '' ;
+          var today = new Date();
+          today.setTime( today.getTime() );
+          if ( expires )  {
+              expires = expires * 1000 * 60 * 60 * 24;
+          }
+          var expires_date = new Date( today.getTime() + (expires) );
+          document.cookie = name + "=" +( value ) +
+              ( ( expires ) ? ";expires=" + expires_date.toGMTString() : "" ) +
+              ( ( path ) ? ";path=" + path : "" ) +
+              ( ( domain ) ? ";domain=" + domain : "" ) +
+              ( ( secure ) ? ";secure" : "" );       //console.log("set cookie for "+name);
+      }
+      function GeneralUsage(aUser){
+        Set_Cookie( "aUser", JSON.stringify(aUser));
+        var mydata= SON.parse(Get_Cookie("mydata"));
+      }
+
     </script>
      
   </body>
