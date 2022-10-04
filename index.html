@@ -35,7 +35,7 @@
 
   <body onload="doBodyLoad();">
     <div class="page">
-      version 1.070 - Oct. 3 2022  
+      version 1.071 - Oct. 3 2022  
       <main>
         <div id="leftside" >  
           <span id="OpticSpeedLayers">Visual High Speed Cortex Preprocess</span>
@@ -59,7 +59,7 @@
             <h2 id="mess" >hi</h2>
           </div>
           <div id="challenge">
-            <h2 style="background-color: yellow;">The Challenge is to find where to click (sample) the left side image to produce the clearest image in the right side, and explain how you find the best sample for each of these 8 pictures - write me and I may send you a prize!</h2>
+            <h2 style="background-color: yellow; display:none;">The Challenge is to find where to click (sample) the left side image to produce the clearest image in the right side, and explain how you find the best sample for each of these 8 pictures - write me and I may send you a prize!</h2>
           </div>
         </div>
         <div id="dash">
@@ -193,10 +193,10 @@
       var cOffY=50;//padding of the body tag
       var offsetx=cOffX;//preset for demo which is 350 px to the right  
 
-      var mustPercieveSeries=4;//progressive perception 
+      var mustPercieveSeries=3;//progressive perception 
       var zoneX=0,zoneY=0,zoneDx=17,zoneDy=17;// granularity for ephaptic activation grid 
       var hitsPerZone=1;//preset for active cNeuron zones of zoneDx * zoneDy neurons to begin concentric field effect
-      var radiusField=13;
+      var radiusField=13;//mostly for animation and explanation 
       var perceptionTestextent=150;// the square sample of the sensed image
       var whiteBlackGreyTreshold=50;
       var mask = [[0, -1, -1], [0, 0, 0], [1, 1, 0]];  //part of preprocess (eg. emboss effect)
