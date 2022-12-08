@@ -17,7 +17,8 @@
           .enhance{background: yellow;}
           
           #messageArea{position: absolute;left: 10px; top: 250px; width:95%;margin:10px;}
-          #imageToSense{ width:300px; position:absolute; left:25px;top:25px;}
+          #imageToSense{ width:300px; position:absolute; left:25px;top:25px;}          
+          #imageToSenseMask{ width:300px; position:absolute; left:25px;top:25px; z-index: 50;opacity: 50%;}
           #OpticSpeedLayers{ width:300px; position:absolute; left:25px;top:5px;}
           #corticalCanvas{ width:300px; position:absolute; left:325px;top:25px;z-index: 1;}
           #AssociativeLayers{ width:300px; position:absolute; left:325px;top:5px;}
@@ -35,12 +36,13 @@
 
   <body onload="doBodyLoad();">
     <div class="page">
-      version 1.071 - Oct. 3 2022  
+      version 1.072 - Dec. 8 2022  
       <main>
         <div id="leftside" >  
           <span id="OpticSpeedLayers">Visual High Speed Cortex Preprocess</span>
-          <span id="AssociativeLayers">Associative Cortex 6-12 hz Mem+Percep</span>            
-          <canvas id="imageToSense" width="300" height="300"></canvas>  
+          <span id="AssociativeLayers">Associative Cortex 6-12 hz Mem+Percep</span>   
+          <canvas id="imageToSense" width="300" height="300"></canvas>          
+          <canvas id="imageToSenseMask" width="300" height="300"></canvas> 
           <canvas id="corticalCanvas" width="300" height="300"></canvas> 
           <canvas id="processCanvas" width="300" height="300"></canvas>
         </div>
@@ -134,11 +136,10 @@
         <br/><br/><br/>
         This demo implements hypothalamic suppression modelling during image selection which suppresses *TOPDOWN* current active mental events (i.e. the perceptive reflex content) and enables more refined subsequent focussed recognition. (Focussing involves suppression of reflex perception).
         <br/><br/>
-        This work implements a simulation for some of the ideas suggested in my earlier paper 
-        <a href="https://www.researchgate.net/publication/359636101_Associative_Memory_Formation_and_Perception_A_Consideration_of_How_Ephaptic_Cortical_Field_Interference_Excites_Branched_Pyramidal_Neuron_Axons_to_Link_with_Synchronously_Activated_Primary_Cortical_Se" target="_blank">
-          Associative Memory Formation and Perception</a> 
-         posted in  March 2022; although references to ephaptic field interference are superceded with a simpler approach.  <br/><br/>
-         I will be using this page as a test harness with which to write a follow up paper<br/><br/><br/><br/><br/><br/><br/>
+        This work implements a simulation for some of the ideas suggested in my earlier paper DOI: 10.13140/RG.2.2.16508.82565 
+        <a href="https://www.researchgate.net/publication/365775620_EXPERIMENTAL_PERCEPTION_PROTOTYPE_IMPLEMENTING_ASSOCIATIVE_MEMORY_IN_JAVASCRIPT" target="_blank">
+          describing associative memory formation and perception as reflexes.</a> 
+         <br/><br/><br/><br/><br/><br/><br/>
         © Jerry Waese 2022<br/>
         
         </div>        
@@ -162,8 +163,10 @@
     
       var corticalCanvas;
       var corticalCtx;
+      var imageToSenseMaskCanvas;
+      var imageToSenseMaskCtx;       
       var sensoryCanvas;
-      var sensoryCtx;
+      var sensoryCtx;  
       var processCanvas;
       var processCtx;
       var imgData;
@@ -181,8 +184,7 @@
      
       var mustPercieve=0;// 
       
-      var branchesReq4Perception=7;
-           //used in tryPerception to promote a resting neuron to active state
+      var branchesReq4Perception=7;    //used in tryPerception to promote a resting neuron to active state
      
       var SpinesAdded=0;
       var corticalNeuronsActivated=0;
@@ -303,7 +305,7 @@
           var pix1,pix2,pix3;
           var total=0;
           for(var i=0;i<theDataLength;i+=4){
-            pix1=0.2126 * imgData.data[i];pix2=0.7152 *imgData.data[i+1];pix3= 0.0722 *imgData.data[i+2];//forget alpha
+            pix1=0.2126 * imgData.data[i];pix2=0.7152 *imgData.data[i+1];pix3= 0.0722 *imgData.data[i+2];
             total=(pix1+pix2+pix3);
             if(total>whiteBlackGreyTreshold){//default 140
               imgData.data[i]=0;imgData.data[i+1]=0;imgData.data[i+2]=0;
@@ -324,6 +326,10 @@
 
 
       function loadFirstImage() {//only once
+        imageToSenseMaskCanvas=document.getElementById('imageToSenseMask');
+        if (imageToSenseMaskCanvas.getContext) {
+          imageToSenseMaskCtx = imageToSenseMaskCanvas.getContext('2d');
+        }
         sensoryCanvas= document.getElementById('imageToSense');
           if (sensoryCanvas.getContext) {
             sensoryCtx = sensoryCanvas.getContext('2d');
@@ -370,7 +376,7 @@
       function isBranchAmongBranches(cP,cN){
         var ml=pyramidalNeurons[cP].branches.length;
         for (var cc=0;cc<ml;cc++){
-           if(pyramidalNeurons[cP].branches[cc].CNID==cN){//Duplicate
+           if(pyramidalNeurons[cP].branches[cc].CNID==cN){//it is aduplicate
               return 1;
             }
         }
@@ -383,7 +389,6 @@
         document.getElementById("under_Cortex").style.display=how;
         if(how=="none"){GTopDownON=1;}// this effectively permits perception to resume, the attention focus has relaxed
         else{GTopDownON=0;}
-        //indicateTopDown();//while building the topdown software articulation
       }
 
       function showAllActivePyramidalBranchEnds(){        
@@ -409,7 +414,20 @@
         doPerceptionTest(offsetStartx,offsetStarty);
       }
 
+      function hideMask(){
+        imageToSenseMaskCanvas.style.display="none";
+        imageToSenseMaskCtx.fillStyle = 'rgba(0,0,0,0)';
+        imageToSenseMaskCtx.fillRect(0,0,gridWidth, gridHeight);
+      }
+      function showMask(offsetStartx,offsetStarty){
+        imageToSenseMaskCanvas.style.display="block";
+        imageToSenseMaskCtx.fillStyle = 'rgba(0,0,0,1.0)';
+        imageToSenseMaskCtx.fillRect(0,0,gridWidth, gridHeight);
+        imageToSenseMaskCtx.fillStyle = 'rgba(255,255,255,1.0)';
+        imageToSenseMaskCtx.fillRect(offsetStartx,offsetStarty,perceptionTestextent,perceptionTestextent);
+      }
       function doPerceptionTest(offsetStartx,offsetStarty){
+        hideMask();
         //copy the zone
         updateTestParameters(offsetStartx,offsetStarty);
         enableTestingPerception("none"); 
@@ -417,8 +435,8 @@
         corticalCtx.fillStyle="white";
         corticalCtx.fillRect(0, 0, gridWidth, gridHeight);
         corticalCtx.putImageData(imgData, 0, 0, offsetStartx, offsetStarty, perceptionTestextent,perceptionTestextent);
-          //gridWidth/2, gridHeight/2);
           //clear the active states for neurons and spines and pneuron branches
+        showMask(offsetStartx, offsetStarty);
         setUpCortexActivation();         
           nowSay("clearing perception field");
           mustPercieve=mustPercieveSeries;
@@ -434,7 +452,8 @@
       }
 
       function showNewImageInterface(){
-        enableTestingPerception("block");        
+        enableTestingPerception("block");       
+        
       }
       
       function deactivateAllSpines(notSignal){
@@ -997,7 +1016,7 @@
                     return true;  
                                  
                 },false);
-                processCanvas.addEventListener("click",function(event){  
+                processCanvas.addEventListener("click",function(event){  //same side as cortical canvas in semitransparent layer
                     var cX=event.clientX;
                     var cY=event.clientY;
                     var pixelData = corticalCtx.getImageData(cX, cY, 1, 1).data; 
@@ -1024,9 +1043,47 @@
                     return true;                
                 },false);
                 sensoryCanvas.addEventListener("click",function(event){  
-                    var cX=event.clientX;
+                  var cX=event.clientX;
                     var cY=event.clientY;
-                    var mX=   cX-50;//we are on the left test windowselecting a rectangle
+                    var mX=   cX-50;//we are on the left test window selecting a rectangle if the mask is not visible
+                    var mY=   cY-cOffY;
+                    nowSay('point x='+(mX)+' point y='+(mY)+ " trigger test extent of "+perceptionTestextent+" pixels square");   
+                    clearCorticalCtx();
+                    clearProcessCtx();     
+                    if (mX<0)mX=0;
+                    if((mX+perceptionTestextent)>gridWidth )mX=gridWidth-perceptionTestextent;
+                    if (mY<0)mY=0;
+                    if((mY+perceptionTestextent)>gridHeight)mY=gridHeight-perceptionTestextent;
+                    doPerceptionTest(mX,mY);
+
+                },false); 
+                sensoryCanvas.addEventListener("mousemove",function(event){  
+                  var cX=event.clientX;
+                    var cY=event.clientY;
+                    var mX=   cX-50;//we are on the left test window moving a rectangle if the mas is not visible
+                    var mY=   cY-cOffY;
+                    if (mX<0)mX=0;
+                    if((mX+perceptionTestextent)>gridWidth )mX=gridWidth-perceptionTestextent;
+                    if (mY<0)mY=0;
+                    if((mY+perceptionTestextent)>gridHeight)mY=gridHeight-perceptionTestextent;
+                    showMask(mX, mY);
+                },false);
+                imageToSenseMaskCanvas.addEventListener("mousemove",function(event){  
+                  var cX=event.clientX;
+                    var cY=event.clientY;
+                    var mX=   cX-50;//we are on the left test window moving a rectangle
+                    var mY=   cY-cOffY;
+                    if (mX<0)mX=0;
+                    if((mX+perceptionTestextent)>gridWidth )mX=gridWidth-perceptionTestextent;
+                    if (mY<0)mY=0;
+                    if((mY+perceptionTestextent)>gridHeight)mY=gridHeight-perceptionTestextent;
+                    showMask(mX, mY);
+                },false);
+
+                imageToSenseMaskCanvas.addEventListener("click",function(event){  
+                  var cX=event.clientX;
+                    var cY=event.clientY;
+                    var mX=   cX-50;//we are on the left test window selecting a rectangle
                     var mY=   cY-cOffY;
                     nowSay('point x='+(mX)+' point y='+(mY)+ " trigger test extent of "+perceptionTestextent+" pixels square");   
                     clearCorticalCtx();
@@ -1180,8 +1237,7 @@
         else mustPercieveSeries=aval
         document.getElementById("SequenceLength").innerText=""+mustPercieveSeries;
       }
-      function changeRadiusLength(){ //span id="RadiusLength"
-        //radiusField 8
+      function changeRadiusLength(){ 
         var aval = parseInt (prompt("Enter new Field radius (suggest 8)", radiusField));
         if(aval!==aval)radiusField=radiusField;
         else if(aval>40)radiusField=40;
@@ -1288,7 +1344,7 @@
             ImDat2.data[4*(x )+gridWidth*4*(y )+3] = 255; 
           }  
         }  
-        //sensoryCtx.putImageData(ImDat2, 0, 0);  Filter out the edge artifacts
+        
         sensoryCtx.fillStyle="black";
         sensoryCtx.fillRect(0,0,gridWidth,gridHeight);        
 
@@ -1299,7 +1355,7 @@
         
         setTimeout(convertToWhiteBlack,delayMin);
       } 
-      //cookie code from allygap
+      //cookie code 
       function Get_Cookie( name ) {
           var start = document.cookie.indexOf( name + "=" );
           var len = start + name.length + 1;
