@@ -36,7 +36,7 @@
 
   <body onload="doBodyLoad();">
     <div class="page">
-      version 1.072 - Dec. 8 2022  
+      version 1.073 - Dec. 9 2022  
       <main>
         <div id="leftside" >  
           <span id="OpticSpeedLayers">Visual High Speed Cortex Preprocess</span>
@@ -69,7 +69,7 @@
             <tr bgcolor="#eee">
               <td>
                 Note: If you change images faster than the short term memory effect, then expect some of the previous image to be recognized as well.
-                The default is 5000 milliseconds (which can be changed below) so initially wait 5 seconds before changing the picture after choosing or testing a picture.
+                The default is 3000 milliseconds (which can be changed below) so initially wait 3 seconds before changing the picture after choosing or testing a picture to prevent inadvertant cortical neuron activation by previous actives.
                 <div style="display:none">
                   <button id="topDownOnOff" onclick="toggletopDownOnOff();" title="If Top Down OFF (focussing) is pressed, Non-Sensory Signals are stopped But
                   Top Down ON resumes perception">Turn Top Down OFF</button>
@@ -207,7 +207,7 @@
       var includeFields=1;
       var GoffsetStartx; //for the test
       var GoffsetStarty;
-      var ShortTermMemoryCutoff=5000;//5 seconds
+      var ShortTermMemoryCutoff=3000;//3 seconds
 
       function doBodyLoad(){
         document.getElementById("under_Cortex").addEventListener("click",function(event){ 
@@ -695,12 +695,15 @@
           }
         }        
         if(matching>0){
+          
           var rstr="found "+matching+" pyramidal: ";
           for (var a=0;a<foundPNs.length;a++){
             rstr+=foundPNs[a]+", ";
           }
+          indicateSelected(x,y);
           return(rstr +" found");
         }
+        indicateSelected(x,y);
         return("no match out of "+pyramidalNeurons.length );
       }
 
@@ -1100,6 +1103,14 @@
         
       }
  
+      function indicateSelected(x,y){
+        corticalCtx.lineWidth = 3;
+        corticalCtx.strokeStyle = 'rgba(255,155,155,1)';
+        corticalCtx.beginPath();
+        corticalCtx.arc(x-3, y, 4, 0,0.25* Math.PI);
+        corticalCtx.stroke();   
+      }
+
       function getCorticalNeuronAt(x,y){
         var gridpoint=x+y*gridWidth;
         var activespines=0;
@@ -1113,6 +1124,7 @@
                 gridpoint=m+x+(y+n)*gridWidth;
                 if(gridpoint<corticalNeurons.length){
                   if(corticalNeurons[gridpoint].active){
+                    
                     for (var f=0; f<corticalNeurons[gridpoint].spines.length;f++){
                       var pyramidalNeuronId=corticalNeurons[gridpoint].spines[f].id;
                       if(corticalNeurons[gridpoint].spines[f].state){
@@ -1120,6 +1132,7 @@
                         activespines++;
                       }
                     }
+                    indicateSelected(x,y);
                     return (", pt="+corticalNeurons[gridpoint].x+","+corticalNeurons[gridpoint].y+" active="+corticalNeurons[gridpoint].active+
                       ", id="+ gridpoint+" active spines ="
                       +activespines+" tot spines ="+ corticalNeurons[gridpoint].spines.length);
