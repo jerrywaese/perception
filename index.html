@@ -25,8 +25,8 @@
           #processCanvas{width:300px; position:absolute; left:325px;top:25px;z-index: 5; opacity: 100%;display:none;}
           #description{float:left;width:95%;margin:14px;height:100px;}
           #dash{left: 50px; top:470px; position: absolute;  height:80px;} 
-          #under_input{position: absolute;left: 50px; top: 370px; width:300px;height:20px;z-index: 20;display:none;}
-          #under_Cortex{position: absolute;left: 350px; top: 370px; width:300px;height:20px;z-index: 20;display:none;}
+          #under_input{position: absolute;left: 50px; top: 360px; width:300px;height:20px;z-index: 20;display:none;}
+          #under_Cortex{position: absolute;left: 350px; top: 360px; width:300px;height:20px;z-index: 20;display:none;}
           #imgSelector{position: absolute;left: 50px; top: 390px; width:521px;height:69px;z-index: 20;display:none;}
           #hidefieldcon{position: absolute;left: 580px; top: 420px; width:200px;height:66px;z-index: 20;}
           #challenge{position: absolute;left: 50px; top: 390px; width:500px;height:266px;}
@@ -36,7 +36,7 @@
 
   <body onload="doBodyLoad();">
     <div class="page">
-      version 1.073 - Dec. 9 2022  
+      version 1.075 - jan 12 2023  
       <main>
         <div id="leftside" >  
           <span id="OpticSpeedLayers">Visual High Speed Cortex Preprocess</span>
@@ -61,34 +61,34 @@
             <h2 id="mess" >hi</h2>
           </div>
           <div id="challenge">
-            <h2 style="background-color: yellow; display:none;">The Challenge is to find where to click (sample) the left side image to produce the clearest image in the right side, and explain how you find the best sample for each of these 8 pictures - write me and I may send you a prize!</h2>
+            <h2 style="background-color: yellow; display:none;">The Challenge is to find where to click (sample) the left side image to produce the clearest image in the right side, and explain how you find the best sample for each of these 8 images - write me and I may send you a prize!</h2>
           </div>
         </div>
         <div id="dash">
           <table width="600">
             <tr bgcolor="#eee">
               <td>
-                Note: If you change images faster than the short term memory effect, then expect some of the previous image to be recognized as well.
-                The default is 3000 milliseconds (which can be changed below) so initially wait 3 seconds before changing the picture after choosing or testing a picture to prevent inadvertant cortical neuron activation by previous actives.
+                <b>General Note about changing images: </b>If you change images faster than the short term memory effect, then expect some of the previous image to be recognized as well.
+                The default is 3000 milliseconds (which can be changed below) so initially wait 3 seconds before changing the image after choosing or testing a image to prevent inadvertant cortical neuron activation by previous actives (the STM potentiation effect).
                 <div style="display:none">
                   <button id="topDownOnOff" onclick="toggletopDownOnOff();" title="If Top Down OFF (focussing) is pressed, Non-Sensory Signals are stopped But
                   Top Down ON resumes perception">Turn Top Down OFF</button>
                   Note: only turn off to learn clean (a hypothalamic effect) Focus or Attention suppressing Perception.
                 </div>
-              </td><td><span id="actionOutput" title="current test parameters"></span><button title="Simulate Last Click Position " 
+              </td><td><span id="actionOutput" title="current test parameters"></span><br/><button class="enhance" title="Simulate Last Click Position " 
                 onclick="repeatlastTestPosition();">RETEST</button></td>
             </tr>
             <tr >
-              <td><button id="changeTestSize" onclick="changeShortTermMemory();" 
+              <td><button id="changeSTM" onclick="changeShortTermMemory();" 
                 title="for 1 minute enter 60000 which is in milliseconds. If you change sample images before ths time, perception will pick up the previous image pattern as well as the current ">Change Short Term memory potentiation</button><br/>
                 Note: any recent images should be more accessible than those that have faded into completely inactive memory. In real life it is about 5 minutes.
               </td><td><span id="stmemory" onclick="changeShortTermMemory();" title="if you use a very small number the effect will be minimal">10000</span></td>
             </tr>
             <tr bgcolor="#eee">
-              <td><button id="changeSTM" onclick="changeTestSize();" 
+              <td><button id="changeSTM" class="enhance" onclick="changeTestSize();" 
                 title="a test size of 150 will certainly reveal much of the associated memory, while a small sample like 50 will show which parts of the image sample have a critical arrangement.">Change Test Size Pixel Width and Height</button><br/>
                 Note: the test size is a square of so many pixels, 150 is default which is half of the width and height of the image
-              </td><td><span id="testSize" onclick="changeTestSize();" title="the smaller this sample square is, the more amazing the perceptual results of holographic memory can be, but also too small a sample may not be enough to recall any associated memory">150</span></td>
+              </td><td class="enhance"><span id="testSize" onclick="changeTestSize();" title="the smaller this sample square is, the more amazing the perceptual results of holographic memory can be, but also too small a sample may not be enough to recall any associated memory">150</span></td>
             </tr>
             <tr>
               <td> <button id="changePerceptionRequired"  onclick="changePerceptionRequired();"
@@ -143,8 +143,8 @@
         © Jerry Waese 2022<br/>
         
         </div>        
-        <div id="under_input">
-          Click above to select and test sample
+        <div id="under_input" class="enhance">
+          <b>Click above to select and test sample</b>
         </div>       
         <button id="under_Cortex" title="Click this button to toggle the direction of branches revealed by clicking above">
           Click above for Pyramidal branches from 
@@ -179,10 +179,11 @@
       var pyramidalNeurons=[];//modelling pyramidal neurons
       var selectedImage=3;//this is *following* the hardcoded start up - refactor startup to make this a true config item (i.e. by cookies)
       var selectedImages=[];
+      var currentSelectedImage=0;
       var nPyramidalBranches=2048;//1024;//preset per pNeuron enabling min 2 spines for cNeuron re-activation from branches from pyramidal (i.e. top down)
       var ratioCortical2Pyramidal=5;//was 5 for max pyramidalNeurons preset for ratio of corticalNeurons to pyramidalNeurons 3 is quite slow to initialize.
      
-      var mustPercieve=0;// 
+      var mustPerceive=0;// 
       
       var branchesReq4Perception=7;    //used in tryPerception to promote a resting neuron to active state
      
@@ -195,7 +196,7 @@
       var cOffY=50;//padding of the body tag
       var offsetx=cOffX;//preset for demo which is 350 px to the right  
 
-      var mustPercieveSeries=3;//progressive perception 
+      var mustPerceiveSeries=3;//progressive perception 
       var zoneX=0,zoneY=0,zoneDx=17,zoneDy=17;// granularity for ephaptic activation grid 
       var hitsPerZone=1;//preset for active cNeuron zones of zoneDx * zoneDy neurons to begin concentric field effect
       var radiusField=13;//mostly for animation and explanation 
@@ -344,6 +345,7 @@
                 theDataLength=data.length;
                 initializeBrain(img1);  
               };
+              isAlreadyFamiliarWith('a_and_z.png');// to set up array and object
               img1.src = 'a_and_z.png';
           }
       }
@@ -355,13 +357,28 @@
         var il=selectedImages.length;
         if(il>0){          
           for (var cc=0;cc<il;cc++){
-            if(selectedImages[cc]==pic){return 1;}//already learned this pic
+            if(selectedImages[cc].picname==pic){
+              currentSelectedImage=cc;
+              return 1;
+            }//already learned this pic
           }
-          selectedImages.push(pic);
+          selectedImages.push({
+            picname : pic,
+            bottomUpActives :0,
+            currentActives : 0,
+            mostActives : 0
+          });
+          currentSelectedImage=il-1;
           return 0;
         }
         else{
-          selectedImages.push(pic);
+          selectedImages.push({
+            picname : pic,
+            bottomUpActives :0,
+            currentActives : 0,
+            mostActives : 0
+          });
+          currentSelectedImage=il;
           return 0;
         }
       }
@@ -369,7 +386,7 @@
         document.getElementById("PerceptionRequired").innerText=""+branchesReq4Perception;
         document.getElementById("whiteBlackGreyTreshold").innerText=""+whiteBlackGreyTreshold;
         document.getElementById("testSize").innerText=""+perceptionTestextent;
-        document.getElementById("SequenceLength").innerText=""+mustPercieveSeries;
+        document.getElementById("SequenceLength").innerText=""+mustPerceiveSeries;
         document.getElementById("RadiusLength").innerText=""+radiusField;
         document.getElementById("stmemory").innerText=""+ShortTermMemoryCutoff;
       }
@@ -396,12 +413,19 @@
         for (var i=0;i<pyrs; i++){
           showAxonBranchesOf(i,1,0);//just the tips
         }        
-        if(mustPercieve>1&&GTopDownON==1){
+        if(mustPerceive>1&&GTopDownON==1){
           perceive();
         }
         else{
-          nowSay("The activated neurons are shown in yellow, where "+branchesReq4Perception+" or more spines were activated");
+          var outString="The activated neurons are shown in yellow, where "+branchesReq4Perception+" or more spines were activated. ";
           showActiveCorticalNeurons();
+          if(selectedImages[currentSelectedImage].mostActives>0  &&
+          selectedImages[currentSelectedImage].mostActives!=selectedImages[currentSelectedImage].currentActives){
+            outString+= "This sample reactivates "+selectedImages[currentSelectedImage].currentActives+" neurons or "+Math.round(100*selectedImages[currentSelectedImage].currentActives/selectedImages[currentSelectedImage].mostActives) +"% perceptive reflex reactivation";
+          }
+
+          nowSay(outString);
+          
           setTimeout(showNewImageInterface(),delayMin);      
         }
       }
@@ -425,6 +449,8 @@
         imageToSenseMaskCtx.fillRect(0,0,gridWidth, gridHeight);
         imageToSenseMaskCtx.fillStyle = 'rgba(255,255,255,1.0)';
         imageToSenseMaskCtx.fillRect(offsetStartx,offsetStarty,perceptionTestextent,perceptionTestextent);
+        //extend pattern mask Dec. 13 2022
+
       }
       function doPerceptionTest(offsetStartx,offsetStarty){
         hideMask();
@@ -435,17 +461,17 @@
         corticalCtx.fillStyle="white";
         corticalCtx.fillRect(0, 0, gridWidth, gridHeight);
         corticalCtx.putImageData(imgData, 0, 0, offsetStartx, offsetStarty, perceptionTestextent,perceptionTestextent);
-          //clear the active states for neurons and spines and pneuron branches
+        //extend pattern transfer Dec. 13 2022
         showMask(offsetStartx, offsetStarty);
-        setUpCortexActivation();         
+        setUpCortexActivation();          //clear the active states for neurons and spines and pneuron branches
           nowSay("clearing perception field");
-          mustPercieve=mustPercieveSeries;
+          mustPerceive=mustPerceiveSeries;
         perceive();
       }
 
       function perceive(){
-        if (mustPercieve>0){
-          mustPercieve-=1;
+        if (mustPerceive>0){
+          mustPerceive-=1;
           deactivateAllSpines(1);
           setTimeout(backPropagate,delayMin);
         }
@@ -484,9 +510,9 @@
         freshTime();
         if(isAlreadyFamiliarWith(selectedImage)){
           clearCorticalCtx();
-          nowSay("we know this image, select sample to test at left side");
+          nowSay("we know this image, select sample to test at left side or press retest button");
           return;//// we wont do this with live video but it is here to prove a point that we are learning each image with one exposure
-        }//why relearn the same image? 
+        }
         simulateThalamicProjection("New Image Activating");  
         setUpCortexActivation();  
         setTimeout(backPropagate,delayMin);  
@@ -519,6 +545,7 @@
         processCtx.putImageData(imgData, 0, 0); 
       }
       function showActiveCorticalNeurons(){
+        var activeCount=0;
         imgData = corticalCtx.getImageData(0, 0, gridWidth, gridHeight);          
           for(var i=0;i<theDataLength;i+=4){
             if( imgData.data[i]==0&&imgData.data[i+1]==0){imgData.data[i+3]=0;} //txparent the blacks so we can see through without dimming      
@@ -533,7 +560,8 @@
            if(corticalNeurons[i].active &&!corticalNeurons[i].topDown ){   //do topdowns - percepts in other color pink
             corticalCtx.beginPath();
             corticalCtx.arc(corticalNeurons[i].x, corticalNeurons[i].y, 1, 0,0.25* Math.PI);
-            corticalCtx.stroke();           
+            corticalCtx.stroke();    
+            activeCount++;       
           }
         }
         corticalCtx.strokeStyle = 'rgba(255,200,200,1)';//pink
@@ -541,8 +569,13 @@
            if(corticalNeurons[i].topDown ){   
             corticalCtx.beginPath();
             corticalCtx.arc(corticalNeurons[i].x, corticalNeurons[i].y, 1, 0,0.25* Math.PI);
-            corticalCtx.stroke();           
+            corticalCtx.stroke();      
+            activeCount++;     
           }
+        }
+        selectedImages[currentSelectedImage].currentActives=activeCount;
+        if (activeCount>selectedImages[currentSelectedImage].mostActives){
+          selectedImages[currentSelectedImage].mostActives=activeCount;
         }
         //you may want to  display also pyramidals that have been activated 
       }
@@ -617,7 +650,7 @@
                     for(n=0;n<2;n++){
                       corticalCtx.beginPath();
                       corticalCtx.arc(corticalNeurons[i].x, corticalNeurons[i].y, 
-                        2+radiusField*n+n*(mustPercieveSeries-mustPercieve+1)*radiusField,
+                        2+radiusField*n+n*(mustPerceiveSeries-mustPerceive+1)*radiusField,
                         0,2* Math.PI);//60*n=radius this is concentric series
                         corticalCtx.stroke();
                     }
@@ -821,7 +854,7 @@
         nowSay("Making Pyramidal branch spines with synchronously active Cortical Neurons");       
         convertyellowtored();
         activatePyramidalsUponBackPropagation();
-        if(!mustPercieve){ //progressive perception
+        if(!mustPerceive){ //progressive perception
           setTimeout(showAllActivePyramidalBranchEnds,delayForFields); 
         }else{
           setTimeout(showAllActivePyramidalBranchEnds,delayMin); 
@@ -831,9 +864,9 @@
       function simulateThalamicProjection(stuff){//activate cortical neurons graphically
         //this function simulates Thalamic Object Behavior affecting the cortical neuron dendritic trees       
         imgData = sensoryCtx.createImageData(gridWidth, gridHeight);
-        var idex=0; var activeCount=0;
+        var iNdex=0; var activeCount=0;
         for (var i = 0; i <theDataLength; i += 4) {
-          var myIndex=idex++;
+          var myIndex=iNdex++;
           var activeN=corticalNeurons[myIndex++].active;
           if(activeN>0){
             activeN=255;
@@ -845,7 +878,8 @@
           imgData.data[i+2]=0;
           imgData.data[i+3]=255;//overlay
         }       
-        corticalCtx.drawImage(sensoryCanvas,0,0,gridWidth,gridHeight,0,0,gridWidth,gridHeight);       
+        corticalCtx.drawImage(sensoryCanvas,0,0,gridWidth,gridHeight,0,0,gridWidth,gridHeight);   
+        //if(activeCount>0){selectedImages[currentSelectedImage].bottomUpActives=activeCount;}//activecount is zero second time through-....debug that out.
         nowSay(stuff + " - Cortical neurons showing marks in yellow -actives="+activeCount);
       }
 
@@ -943,7 +977,7 @@
         theDataLength=data.length;
         var pNcount=0;
         
-        var idex=0;       
+        var iNdex=0;       
         for (var i = 0; i < theDataLength; i += 4) {         
           //Create the cNeuron array to accommodate the image AND  set neurons active in display data array at same time
           var xpos=parseInt (i/4%gridWidth);
@@ -958,7 +992,7 @@
             corticalNeuronsActivated++;
           }
           corticalNeurons.push({
-              index:idex++,
+              index:iNdex++,
               active:black,//using the redchannel
               topDown:0,/////////////e.g. subject to hypothalamic suppression
               time:0,////////////////e.g. short term memory modeling, containing the  time of last activation which can favor reactivation with fewer spines
@@ -1107,7 +1141,7 @@
         corticalCtx.lineWidth = 3;
         corticalCtx.strokeStyle = 'rgba(255,155,155,1)';
         corticalCtx.beginPath();
-        corticalCtx.arc(x-3, y, 4, 0,0.25* Math.PI);
+        corticalCtx.arc(x-3, y, 5, 0,0.25* Math.PI);
         corticalCtx.stroke();   
       }
 
@@ -1243,12 +1277,12 @@
         document.getElementById("PerceptionRequired").innerText=""+branchesReq4Perception;
       }
       function changeSequenceLength(){ 
-        var aval = parseInt (prompt("Enter new Thalamic Loop Sequence (suggest 4)", mustPercieveSeries));
-        if(aval!==aval)mustPercieveSeries=mustPercieveSeries;
-        else if(aval>20)mustPercieveSeries=20;
-        else if(aval<1)mustPercieveSeries=1;
-        else mustPercieveSeries=aval
-        document.getElementById("SequenceLength").innerText=""+mustPercieveSeries;
+        var aval = parseInt (prompt("Enter new Thalamic Loop Sequence (suggest 4)", mustPerceiveSeries));
+        if(aval!==aval)mustPerceiveSeries=mustPerceiveSeries;
+        else if(aval>20)mustPerceiveSeries=20;
+        else if(aval<1)mustPerceiveSeries=1;
+        else mustPerceiveSeries=aval
+        document.getElementById("SequenceLength").innerText=""+mustPerceiveSeries;
       }
       function changeRadiusLength(){ 
         var aval = parseInt (prompt("Enter new Field radius (suggest 8)", radiusField));
