@@ -37,7 +37,7 @@
 
   <body onload="doBodyLoad();">
     <div class="page">
-      version 1.076 - Jan. 13, 2023  
+      version 1.078 - Jan. 13, 2023  
       <main>
         <div id="leftside" >  
           <span id="OpticSpeedLayers">Visual High Speed Cortex Preprocess</span>
@@ -87,7 +87,7 @@
             </tr>
             <tr bgcolor="#eee">
               <td><button id="changeSTM" class="enhance" onclick="changeTestSize();" 
-                title="a test size of 150 will certainly reveal much of the associated memory, while a small sample like 50 will show which parts of the image sample have a critical arrangement.">Change Test Size Pixel Width and Height</button><br/>
+                title="a test size of 150 will certainly reveal much of the associated memory, while a small sample like 50 will show which parts of the image sample have a critical arrangement.">Change Test Size Pixel Width and Height</button>  <input type="checkbox" id="useComb"/> <label for="useComb" class="enhance">Use Comb Screen</label><br/>
                 Note: the test size is a square of so many pixels, 150 is default which is half of the width and height of the image
               </td><td class="enhance"><span id="testSize" onclick="changeTestSize();" title="the smaller this sample square is, the more amazing the perceptual results of holographic memory can be, but also too small a sample may not be enough to recall any associated memory">150</span></td>
             </tr>
@@ -140,7 +140,9 @@
         This work implements a simulation for some of the ideas suggested in my earlier paper DOI: 10.13140/RG.2.2.16508.82565 
         <a href="https://www.researchgate.net/publication/365775620_EXPERIMENTAL_PERCEPTION_PROTOTYPE_IMPLEMENTING_ASSOCIATIVE_MEMORY_IN_JAVASCRIPT" target="_blank">
           describing associative memory formation and perception as reflexes.</a> 
-         <br/><br/><br/><br/><br/><br/><br/>
+         <br/><br/><br/>
+         (*) % gross perceptive reflex reactivation is a number that compares the active neuron count after perception with the active neuron count when the image is first encountered, it is not a figure related to pattern correspondence - merely a gross activation figure.  Additional activation will occur after learning several images and will be visible as screen hash, or dust in the background - indicative of cortical neurons of other engrams which share the same ARC protein spines.
+         <br/><br/><br/><br/><br/><br/>
         © Jerry Waese 2022<br/>
         
         </div>        
@@ -420,9 +422,10 @@
         else{
           var outString="The activated neurons are shown in yellow, where "+branchesReq4Perception+" or more spines were activated. ";
           showActiveCorticalNeurons();
-          if(selectedImages[currentSelectedImage].mostActives>0  &&
-          selectedImages[currentSelectedImage].mostActives!=selectedImages[currentSelectedImage].currentActives){
-            outString+= "This sample reactivates "+selectedImages[currentSelectedImage].currentActives+" neurons or "+Math.round(100*selectedImages[currentSelectedImage].currentActives/selectedImages[currentSelectedImage].mostActives) +"% perceptive reflex reactivation";
+          if(selectedImages[currentSelectedImage].mostActives>0 
+             //&& selectedImages[currentSelectedImage].mostActives!=selectedImages[currentSelectedImage].currentActives
+             ){
+            outString+= "This sample reactivates "+selectedImages[currentSelectedImage].currentActives+" neurons or "+Math.round(100*selectedImages[currentSelectedImage].currentActives/selectedImages[currentSelectedImage].mostActives) +"% gross perceptive reflex reactivation *";
           }
 
           nowSay(outString);
@@ -447,10 +450,19 @@
       function showMask(offsetStartx,offsetStarty){
         imageToSenseMaskCanvas.style.display="block";
         imageToSenseMaskCtx.fillStyle = 'rgba(0,0,0,1.0)';
-        imageToSenseMaskCtx.fillRect(0,0,gridWidth, gridHeight);
+        imageToSenseMaskCtx.fillRect(0,0,gridWidth, gridHeight); 
         imageToSenseMaskCtx.fillStyle = 'rgba(255,255,255,1.0)';
-        imageToSenseMaskCtx.fillRect(offsetStartx,offsetStarty,perceptionTestextent,perceptionTestextent);
-        //extend pattern mask Dec. 13 2022
+        if(!document.getElementById("useComb").checked){          
+          imageToSenseMaskCtx.fillRect(offsetStartx,offsetStarty,perceptionTestextent,perceptionTestextent);
+        }
+        else{
+          var combWidth=perceptionTestextent/10;
+          for (var tine=0;tine<5;tine++){
+            imageToSenseMaskCtx.fillRect(offsetStartx+2*tine*combWidth,offsetStarty,combWidth,perceptionTestextent);
+          }
+
+        }
+        //extend pattern mask Dec. 13 2022-done jan. 13 2023 - took a whole month to settle this and the percentage recognized over 2 days
 
       }
       function doPerceptionTest(offsetStartx,offsetStarty){
@@ -461,8 +473,16 @@
         imgData = sensoryCtx.getImageData(0, 0, gridWidth, gridHeight); 
         corticalCtx.fillStyle="white";
         corticalCtx.fillRect(0, 0, gridWidth, gridHeight);
-        corticalCtx.putImageData(imgData, 0, 0, offsetStartx, offsetStarty, perceptionTestextent,perceptionTestextent);
-        //extend pattern transfer Dec. 13 2022
+        if(!document.getElementById("useComb").checked){   
+          corticalCtx.putImageData(imgData, 0, 0, offsetStartx, offsetStarty, perceptionTestextent,perceptionTestextent);
+        }
+        else{
+          var combWidth=perceptionTestextent/10;
+          for (var tine=0;tine<5;tine++){
+            corticalCtx.putImageData(imgData, 0, 0, offsetStartx+2*tine*combWidth, offsetStarty, combWidth,perceptionTestextent);
+          }
+        }
+        //extend pattern transfer Dec. 13 2022 - Jan 13 2023
         showMask(offsetStartx, offsetStarty);
         setUpCortexActivation();          //clear the active states for neurons and spines and pneuron branches
           nowSay("clearing perception field");
@@ -851,7 +871,7 @@
         }
       }
       
-      function backPropagate(){       
+      function backPropagate(){       //this is guts of perceive
         nowSay("Making Pyramidal branch spines with synchronously active Cortical Neurons");       
         convertyellowtored();
         activatePyramidalsUponBackPropagation();
@@ -880,7 +900,7 @@
           imgData.data[i+3]=255;//overlay
         }       
         corticalCtx.drawImage(sensoryCanvas,0,0,gridWidth,gridHeight,0,0,gridWidth,gridHeight);   
-        //if(activeCount>0){selectedImages[currentSelectedImage].bottomUpActives=activeCount;}//activecount is zero second time through-....debug that out.
+        
         nowSay(stuff + " - Cortical neurons showing marks in yellow -actives="+activeCount);
       }
 
