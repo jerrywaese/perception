@@ -37,7 +37,7 @@
 
   <body onload="doBodyLoad();">
     <div class="page">
-      version 1.078 - Jan. 13, 2023  
+      version 1.080 - Jan. 15, 2023  
       <main>
         <div id="leftside" >  
           <span id="OpticSpeedLayers">Visual High Speed Cortex Preprocess</span>
@@ -87,9 +87,9 @@
             </tr>
             <tr bgcolor="#eee">
               <td><button id="changeSTM" class="enhance" onclick="changeTestSize();" 
-                title="a test size of 150 will certainly reveal much of the associated memory, while a small sample like 50 will show which parts of the image sample have a critical arrangement.">Change Test Size Pixel Width and Height</button>  <input type="checkbox" id="useComb"/> <label for="useComb" class="enhance">Use Comb Screen</label><br/>
+                title="a test size of 150 will certainly reveal much of the associated memory, while a small sample like 50 will show which parts of the image sample have a critical arrangement. Use the split to get a separated sample with a gap in between">Change Test Size Pixel Width and Height</button>  <input type="checkbox" id="useComb"/> <label for="useComb" class="enhance">Split Sample</label><br/>
                 Note: the test size is a square of so many pixels, 150 is default which is half of the width and height of the image
-              </td><td class="enhance"><span id="testSize" onclick="changeTestSize();" title="the smaller this sample square is, the more amazing the perceptual results of holographic memory can be, but also too small a sample may not be enough to recall any associated memory">150</span></td>
+              </td><td class="enhance"><span id="testSize" onclick="changeTestSize();" title="the smaller this sample square is, the more amazing the perceptual results of holographic memory can be, but also too small a sample may not be enough to recall any associated memory - splitting the sample can be interesting">150</span></td>
             </tr>
             <tr>
               <td> <button id="changePerceptionRequired"  onclick="changePerceptionRequired();"
@@ -456,9 +456,9 @@
           imageToSenseMaskCtx.fillRect(offsetStartx,offsetStarty,perceptionTestextent,perceptionTestextent);
         }
         else{
-          var combWidth=perceptionTestextent/10;
-          for (var tine=0;tine<5;tine++){
-            imageToSenseMaskCtx.fillRect(offsetStartx+2*tine*combWidth,offsetStarty,combWidth,perceptionTestextent);
+          var combWidth=perceptionTestextent/3;
+          for (var tine=0;tine<2;tine++){
+            imageToSenseMaskCtx.fillRect(offsetStartx+2*tine*combWidth,offsetStarty,combWidth,combWidth);
           }
 
         }
@@ -477,9 +477,9 @@
           corticalCtx.putImageData(imgData, 0, 0, offsetStartx, offsetStarty, perceptionTestextent,perceptionTestextent);
         }
         else{
-          var combWidth=perceptionTestextent/10;
-          for (var tine=0;tine<5;tine++){
-            corticalCtx.putImageData(imgData, 0, 0, offsetStartx+2*tine*combWidth, offsetStarty, combWidth,perceptionTestextent);
+          var combWidth=perceptionTestextent/3;
+          for (var tine=0;tine<2;tine++){
+            corticalCtx.putImageData(imgData, 0, 0, offsetStartx+2*tine*combWidth, offsetStarty, combWidth,combWidth);
           }
         }
         //extend pattern transfer Dec. 13 2022 - Jan 13 2023
@@ -1100,57 +1100,25 @@
                     event.preventDefault(); 
                     return true;                
                 },false);
-                sensoryCanvas.addEventListener("click",function(event){  
-                  var cX=event.clientX;
-                    var cY=event.clientY;
-                    var mX=   cX-50;//we are on the left test window selecting a rectangle if the mask is not visible
-                    var mY=   cY-cOffY;
-                    nowSay('point x='+(mX)+' point y='+(mY)+ " trigger test extent of "+perceptionTestextent+" pixels square");   
+                sensoryCanvas.addEventListener("click",function(event){               
+                     
                     clearCorticalCtx();
                     clearProcessCtx();     
-                    if (mX<0)mX=0;
-                    if((mX+perceptionTestextent)>gridWidth )mX=gridWidth-perceptionTestextent;
-                    if (mY<0)mY=0;
-                    if((mY+perceptionTestextent)>gridHeight)mY=gridHeight-perceptionTestextent;
-                    doPerceptionTest(mX,mY);
+                    perceiveAt(event);
 
                 },false); 
                 sensoryCanvas.addEventListener("mousemove",function(event){  
-                  var cX=event.clientX;
-                    var cY=event.clientY;
-                    var mX=   cX-50;//we are on the left test window moving a rectangle if the mas is not visible
-                    var mY=   cY-cOffY;
-                    if (mX<0)mX=0;
-                    if((mX+perceptionTestextent)>gridWidth )mX=gridWidth-perceptionTestextent;
-                    if (mY<0)mY=0;
-                    if((mY+perceptionTestextent)>gridHeight)mY=gridHeight-perceptionTestextent;
-                    showMask(mX, mY);
+                  maskAt(event);
                 },false);
                 imageToSenseMaskCanvas.addEventListener("mousemove",function(event){  
-                  var cX=event.clientX;
-                    var cY=event.clientY;
-                    var mX=   cX-50;//we are on the left test window moving a rectangle
-                    var mY=   cY-cOffY;
-                    if (mX<0)mX=0;
-                    if((mX+perceptionTestextent)>gridWidth )mX=gridWidth-perceptionTestextent;
-                    if (mY<0)mY=0;
-                    if((mY+perceptionTestextent)>gridHeight)mY=gridHeight-perceptionTestextent;
-                    showMask(mX, mY);
+                    maskAt(event);
                 },false);
 
                 imageToSenseMaskCanvas.addEventListener("click",function(event){  
-                  var cX=event.clientX;
-                    var cY=event.clientY;
-                    var mX=   cX-50;//we are on the left test window selecting a rectangle
-                    var mY=   cY-cOffY;
-                    nowSay('point x='+(mX)+' point y='+(mY)+ " trigger test extent of "+perceptionTestextent+" pixels square");   
+                    
                     clearCorticalCtx();
                     clearProcessCtx();     
-                    if (mX<0)mX=0;
-                    if((mX+perceptionTestextent)>gridWidth )mX=gridWidth-perceptionTestextent;
-                    if (mY<0)mY=0;
-                    if((mY+perceptionTestextent)>gridHeight)mY=gridHeight-perceptionTestextent;
-                    doPerceptionTest(mX,mY);
+                   perceiveAt(event);
 
                 },false);
         
@@ -1158,6 +1126,47 @@
         
       }
  
+      function perceiveAt(event){
+        var cX=event.clientX;
+        var cY=event.clientY;
+        var limitC=document.getElementById("useComb").checked;
+        var mX=   cX-50;//we are on the left test window selecting a rectangle if the mask is not visible
+        var mY=   cY-cOffY;
+        nowSay('point x='+(mX)+' point y='+(mY)+ " trigger test extent of "+perceptionTestextent+" pixels square");  
+        if(!limitC){
+          if (mX<0)mX=0;
+          if((mX+perceptionTestextent)>gridWidth )mX=gridWidth-perceptionTestextent;
+          if (mY<0)mY=0;
+          if((mY+perceptionTestextent)>gridHeight)mY=gridHeight-perceptionTestextent;
+        }
+        else{
+          if (mX<0)mX=0;
+          if((mX+perceptionTestextent)>gridWidth )mX=gridWidth-perceptionTestextent;
+          if (mY<0)mY=0;
+          if((mY+perceptionTestextent/3)>gridHeight)mY=gridHeight-perceptionTestextent/3;
+        }
+        doPerceptionTest(mX,mY);
+      }
+      function maskAt(event){
+        var cX=event.clientX;
+        var cY=event.clientY;
+        var limitC=document.getElementById("useComb").checked;
+        var mX=   cX-50;//we are on the left test window selecting a rectangle if the mask is not visible
+        var mY=   cY-cOffY;
+        if(!limitC){
+          if (mX<0)mX=0;
+          if((mX+perceptionTestextent)>gridWidth )mX=gridWidth-perceptionTestextent;
+          if (mY<0)mY=0;
+          if((mY+perceptionTestextent)>gridHeight)mY=gridHeight-perceptionTestextent;
+        }
+        else{
+          if (mX<0)mX=0;
+          if((mX+perceptionTestextent)>gridWidth )mX=gridWidth-perceptionTestextent;
+          if (mY<0)mY=0;
+          if((mY+perceptionTestextent/3)>gridHeight)mY=gridHeight-perceptionTestextent/3;
+        }
+        showMask(mX, mY);
+      }
       function indicateSelected(x,y){
         corticalCtx.lineWidth = 3;
         corticalCtx.strokeStyle = 'rgba(255,155,155,1)';
@@ -1276,9 +1285,9 @@
         document.getElementById("stmemory").innerText=""+ShortTermMemoryCutoff;
       }
       function changeTestSize(){
-        var aval = parseInt (prompt("Enter new test extent between 50 and 200", perceptionTestextent));
+        var aval = parseInt (prompt("Enter new test extent between 50 and 300", perceptionTestextent));
         if(aval!==aval)perceptionTestextent=perceptionTestextent;
-        else if(aval>200)perceptionTestextent=200;
+        else if(aval>300)perceptionTestextent=300;
         else if(aval<50)perceptionTestextent=50;
         else perceptionTestextent=aval;
         document.getElementById("testSize").innerText=""+perceptionTestextent;
