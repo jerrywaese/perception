@@ -37,7 +37,7 @@
 
   <body onload="doBodyLoad();">
     <div class="page">
-      version 1.080 - Jan. 15, 2023  
+      version 1.081 - Jan. 16, 2023  
       <main>
         <div id="leftside" >  
           <span id="OpticSpeedLayers">Visual High Speed Cortex Preprocess</span>
@@ -421,11 +421,17 @@
         }
         else{
           var outString="The activated neurons are shown in yellow, where "+branchesReq4Perception+" or more spines were activated. ";
+          var theFraction=0;
           showActiveCorticalNeurons();
-          if(selectedImages[currentSelectedImage].mostActives>0 
-             //&& selectedImages[currentSelectedImage].mostActives!=selectedImages[currentSelectedImage].currentActives
-             ){
+          if(selectedImages[currentSelectedImage].mostActives>0    ){
             outString+= "This sample reactivates "+selectedImages[currentSelectedImage].currentActives+" neurons or "+Math.round(100*selectedImages[currentSelectedImage].currentActives/selectedImages[currentSelectedImage].mostActives) +"% gross perceptive reflex reactivation *";
+            if(!document.getElementById("useComb").checked){   
+              theFraction=Math.round(100*(perceptionTestextent*perceptionTestextent)/(300*300));
+            }
+            else{
+              theFraction=Math.round(100*(2*(perceptionTestextent/3)*(perceptionTestextent/3))/(300*300));
+            }
+            outString += "- sample is set to "+theFraction+"% of the full image area";
           }
 
           nowSay(outString);
