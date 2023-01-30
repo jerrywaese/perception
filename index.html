@@ -39,7 +39,7 @@
 
   <body onload="doBodyLoad();">
     <div class="page">
-      version 1.084 - Jan. 24, 2023  
+      version 1.090 - Jan. 30, 2023  
       <main>
         <div id="leftside" >  
           <span id="OpticSpeedLayers">Visual High Speed Cortex Preprocess</span>
@@ -180,7 +180,7 @@
       var processCtx;
       var imgData;
       var pixelData;//used with activate PyramidalsToMakeSpines 
-            
+      var debugIndex=-1;     
       var gridWidth;
       var gridHeight;
       var theDataLength;
@@ -190,7 +190,7 @@
       var selectedImages=[];
       var currentSelectedImage=0;      
       var currentSelectedImageName="";
-      var nPyramidalBranches=2048;//1024;//preset per pNeuron enabling min 2 spines for cNeuron re-activation from branches from pyramidal (i.e. top down)
+      var nPyramidalBranches=2048;//preset per pNeuron enabling min 7 (variable) spines for cNeuron re-activation from pyramidal branches   (i.e. top down)
       var ratioCortical2Pyramidal=5;//was 5 for max pyramidalNeurons preset for ratio of corticalNeurons to pyramidalNeurons 3 is quite slow to initialize.
      
       var mustPerceive=0;// 
@@ -513,18 +513,17 @@
             corticalCtx.putImageData(imgData, 0, 0, offsetStartx+2*tine*combWidth, offsetStarty, combWidth,combWidth);
           }
         }
-        //extend pattern transfer Dec. 13 2022 - Jan 13 2023
         showMask(offsetStartx, offsetStarty);
         setUpCortexActivation();          //clear the active states for neurons and spines and pneuron branches
-          nowSay("clearing perception field");
-          mustPerceive=mustPerceiveSeries;
+        nowSay("clearing perception field");
+        mustPerceive=mustPerceiveSeries;
         perceive();
       }
 
       function perceive(){
         if (mustPerceive>0){
           mustPerceive-=1;
-          deactivateAllSpines(1);
+          //deactivateAllSpines(0);
           setTimeout(backPropagate,delayMin);
         }
       }
@@ -534,18 +533,18 @@
         
       }
       
-      function deactivateAllSpines(notSignal){
+      function deactivateAllSpines(newImage){
         for (var a=0;a<corticalNeurons.length;a++){
+          while (corticalNeurons[a].synapses.length>0){corticalNeurons[a].synapses.pop();}  
           deactivateSpines(a);
-          if(!notSignal){
+          if(newImage){
             corticalNeurons[a].active=0;
           }
-          corticalNeurons[a].topDown=0;
         }
       }
 
       function cortexPrepNewImage(){
-        deactivateAllSpines(0);        
+        deactivateAllSpines(1);     //make topdown=0 and active=0   
         for (var a=0;a<pyramidalNeurons.length;a++){
           pyramidalNeurons[a].active=0;
         }       
@@ -796,7 +795,7 @@
         return("no match out of "+pyramidalNeurons.length );
       }
 
-      function deactivateSpines(neuron){
+      function deactivateSpines(neuron){// and pops accumulating synapses (pre-spines)
         var spineCount=corticalNeurons[neuron].spines.length;
         corticalNeurons[neuron].topDown=0;
         if (spineCount>0){
@@ -814,27 +813,43 @@
       
       function activateAxonBranchesOf(pyram){
         for(var bs=0; bs<pyramidalNeurons[pyram].branches.length;bs++){
-          if(pyramidalNeurons[pyram].branches[bs].cNeuronId!=-1){
-            if(corticalNeurons[pyramidalNeurons[pyram].branches[bs].cNeuronId].active ){
-              //neuron already active therefore we might add spines from an active pyramidal
-              createNewMemorySpine(pyram,pyramidalNeurons[pyram].branches[bs].cNeuronId);
-              corticalNeurons[pyramidalNeurons[pyram].branches[bs].cNeuronId].time=eventTime;///setting up the short term memory effect
+          var contactedCorticalNeuronID=pyramidalNeurons[pyram].branches[bs].cNeuronId;
+          if(contactedCorticalNeuronID!=-1){
+            
+            if(corticalNeurons[contactedCorticalNeuronID].active ){ //neuron already active therefore we can attempt to add spine from an this branch
+
+              createNewMemorySpine(pyram,contactedCorticalNeuronID);
+              corticalNeurons[contactedCorticalNeuronID].time=eventTime;///setting up the short term memory effect
             }         
             else{//target Cortical neuron is resting           
-              if(corticalNeurons[pyramidalNeurons[pyram].branches[bs].cNeuronId].spines.length>0){//target Cortical neuron has spines              
-                for(var as=0;as<corticalNeurons[pyramidalNeurons[pyram].branches[bs].cNeuronId].spines.length;as++){                           
-                  if( corticalNeurons[pyramidalNeurons[pyram].branches[bs].cNeuronId].spines[as].id==pyram 
-                    && corticalNeurons[pyramidalNeurons[pyram].branches[bs].cNeuronId].active<1){//do not try duplicates or continue testing past activation
-                    tryPerception(pyram, pyramidalNeurons[pyram].branches[bs].cNeuronId);
+              if(corticalNeurons[contactedCorticalNeuronID].spines.length>0){//target Cortical neuron has spines              
+                for(var as=0;as<corticalNeurons[contactedCorticalNeuronID].spines.length;as++){                           
+                  if( corticalNeurons[contactedCorticalNeuronID].spines[as].id==pyram 
+                    && corticalNeurons[contactedCorticalNeuronID].active<1){//do not try duplicates or continue testing past activation
+                    tryPerception(pyram, contactedCorticalNeuronID,bs);
                     pyramidalNeurons[pyram].branches[bs].activeSpine=1;
                   }
                 }            
+              }
+              if (debugIndex==contactedCorticalNeuronID){
+                var thisGuymayBeHot=1;
               }
             }        
           }
         }
       }
-
+      function assureARCactive(neuronID,pyram,ARCBr){
+        var spineCount=corticalNeurons[neuronID].spines.length;
+        
+        for (var i = 0; i <spineCount; i++) {
+            if(corticalNeurons[neuronID].spines[i].id==pyram){
+              
+              corticalNeurons[neuronID].spines[i].state=1;
+              corticalNeurons[neuronID].spines[i].time=eventTime;
+              break;
+            }
+        }
+      }
       function createNewMemorySpine(pyram,neuronID){ 
         // yes already checked synchronous activation
         //activate + add  pyramidal branch spine to synchronously active Cortical neuron
@@ -865,18 +880,13 @@
         }
       }
 
-      function tryPerception(pyram,neuronID){ //this can be  perception if active spine count is over the perception threshold
+      function tryPerception(pyram,neuronID,bs){ //this can be  perception if active spine count is over the perception threshold
         //activate pyramidal branch spine on a resting neuron
         if(!GTopDownON)return; //hypothalamic suppression 
-        var synapseFound=0;
-        
+        var synapseFound=0;       
         var synapseCount=corticalNeurons[neuronID].synapses.length;
         if (synapseCount<1){
-          corticalNeurons[neuronID].synapses.push({
-            id:pyram,
-            time:eventTime,
-            state:1
-          });
+          corticalNeurons[neuronID].synapses.push({ id:pyram,branch:bs, time:eventTime, state:1 });
         }
         else{
           for (var i = 0; i <synapseCount; i ++) {//update that synapse
@@ -886,22 +896,30 @@
               break;
             }
           }
-          if(!synapseFound){corticalNeurons[neuronID].synapses.push({
-              id:pyram,
-              time:eventTime,
-              state:1
-            });
+          if(!synapseFound){
+            corticalNeurons[neuronID].synapses.push({  id:pyram,branch:bs, time:eventTime,  state:1   });
           }
           synapseCount=corticalNeurons[neuronID].synapses.length;
-          //we can modify for short term memory halfing the trigger but can get more sophisticated
-          if((corticalNeurons[neuronID].shortTerm && synapseCount>((branchesReq4Perception/2) -1))//easier to activate fresh or recently active
-              ||synapseCount>=branchesReq4Perception){                  
+          
+          //for short term memory halfing the branchesReq4Perception but this can get more sophisticated 
+          if(  (corticalNeurons[neuronID].shortTerm && (synapseCount> ( (branchesReq4Perception/2) -1) ))//easier to activate recently active
+              || synapseCount>=branchesReq4Perception){    
+            if (debugIndex==neuronID){
+              var thisGuymayBeHot=1;
+            }    
+                   
             corticalNeurons[neuronID].active=1;   //this here is the perceptive reflex    
             corticalNeurons[neuronID].topDown=1;  
             corticalNeurons[neuronID].time= eventTime;   
             for(k=0;k<synapseCount;k++){
-              corticalNeurons[neuronID].synapses.pop();
-            }             
+              var ARCpyr=corticalNeurons[neuronID].synapses[k].id;
+              var ARCBr=corticalNeurons[neuronID].synapses[k].branch;              
+              assureARCactive(neuronID,ARCpyr,ARCBr);   
+     
+            }  
+            for(k=0;k<synapseCount;k++){
+              corticalNeurons[neuronID].synapses.pop();      
+            }           
           }          
         }
       }
@@ -909,6 +927,7 @@
       function backPropagate(){       //this is guts of perceive
         nowSay("Making Pyramidal branch spines with synchronously active Cortical Neurons");       
         convertyellowtored();
+        deactivateAllSpines(0);
         activatePyramidalsUponBackPropagation();
         if(!mustPerceive){ //progressive perception
           setTimeout(showAllActivePyramidalBranchEnds,delayForFields); 
@@ -927,6 +946,7 @@
           if(activeN>0){
             activeN=255;
             corticalNeurons[myIndex].shortTerm=1;//FRESH - making the current active as responsive as recent
+            corticalNeurons[myIndex].time=eventTime;          //need to set time too.
             activeCount++;
           }
           imgData.data[i]=activeN;
@@ -1213,6 +1233,7 @@
       function getCorticalNeuronAt(x,y){
         var gridpoint=x+y*gridWidth;
         var activespines=0;
+        var SshortTerm='.';
         if(corticalNeurons.length<1){
           return "no neurons";
         }
@@ -1222,8 +1243,7 @@
               if(m+x>=0&&m+x<gridWidth && n+y>=0&&n+y<gridHeight){
                 gridpoint=m+x+(y+n)*gridWidth;
                 if(gridpoint<corticalNeurons.length){
-                  if(corticalNeurons[gridpoint].active){
-                    
+                  if(corticalNeurons[gridpoint].active){                    
                     for (var f=0; f<corticalNeurons[gridpoint].spines.length;f++){
                       var pyramidalNeuronId=corticalNeurons[gridpoint].spines[f].id;
                       if(corticalNeurons[gridpoint].spines[f].state){
@@ -1232,19 +1252,17 @@
                       }
                     }
                     indicateSelected(x,y);
+                    if(corticalNeurons[gridpoint].shortTerm){
+                      SshortTerm=', short term memory facilitated.';
+                    }
                     return (", pt="+corticalNeurons[gridpoint].x+","+corticalNeurons[gridpoint].y+" active="+corticalNeurons[gridpoint].active+
                       ", id="+ gridpoint+" active spines ="
-                      +activespines+" tot spines ="+ corticalNeurons[gridpoint].spines.length);
+                      +activespines+" tot spines ="+ corticalNeurons[gridpoint].spines.length+SshortTerm);
                   }
                 }
               }
             }
           }
-        }
-        else{
-              return (corticalNeurons[gridpoint].x+","+corticalNeurons[gridpoint].y+" active="+corticalNeurons[gridpoint].active+
-              ", id="+"   tot neurons= "+corticalNeurons.length);
-          
         }
         return("no match out of "+corticalNeurons.length + "   gridpoint="+ gridpoint);
       }
