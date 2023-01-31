@@ -39,7 +39,7 @@
 
   <body onload="doBodyLoad();">
     <div class="page">
-      version 1.091 - Jan. 31, 2023  
+      version 1.093 - Feb. 1, 2023  
       <main>
         <div id="leftside" >  
           <span id="OpticSpeedLayers">Visual High Speed Cortex Preprocess</span>
@@ -903,7 +903,7 @@
           
           //for short term memory halfing the branchesReq4Perception but this can get more sophisticated 
           if(  (corticalNeurons[neuronID].shortTerm && (synapseCount> ( (branchesReq4Perception/2) -1) ))//easier to activate recently active
-              || synapseCount>=branchesReq4Perception){    
+              || synapseCount>branchesReq4Perception){    
             if (debugIndex==neuronID){
               var thisGuymayBeHot=1;
             }    
@@ -945,7 +945,6 @@
           var activeN=corticalNeurons[myIndex++].active;
           if(activeN>0){
             activeN=255;
-            corticalNeurons[myIndex].shortTerm=1;//FRESH - making the current active as responsive as recent
             corticalNeurons[myIndex].time=eventTime;          //need to set time too.
             activeCount++;
           }
