@@ -39,7 +39,7 @@
 
   <body onload="doBodyLoad();">
     <div class="page">
-      version 1.093 - Feb. 1, 2023  
+      version 1.094 - Feb. 1, 2023  
       <main>
         <div id="leftside" >  
           <span id="OpticSpeedLayers">Visual High Speed Cortex Preprocess</span>
@@ -200,7 +200,7 @@
       var SpinesAdded=0;
       var corticalNeuronsActivated=0;
       var delayForFields=250;//was 2000 
-      var delayMin=250;
+      var delayMin=50;//was 250
 
       var cOffX=350;//300+padding
       var cOffY=50;//padding of the body tag
@@ -839,13 +839,10 @@
         }
       }
       function assureARCactive(neuronID,pyram,ARCBr){
-        var spineCount=corticalNeurons[neuronID].spines.length;
-        
+        var spineCount=corticalNeurons[neuronID].spines.length;        
         for (var i = 0; i <spineCount; i++) {
-            if(corticalNeurons[neuronID].spines[i].id==pyram){
-              
+            if(corticalNeurons[neuronID].spines[i].id==pyram){              
               corticalNeurons[neuronID].spines[i].state=1;
-              corticalNeurons[neuronID].spines[i].time=eventTime;
               break;
             }
         }
@@ -858,7 +855,6 @@
         if (spineCount==0){
           corticalNeurons[neuronID].spines.push({
             id:pyram,
-            time:eventTime,
             state:1
           });//add the pyramidal to the list of spines and set active
         }else{
@@ -866,14 +862,12 @@
             if(corticalNeurons[neuronID].spines[i].id==pyram){
               spineFound=1;
               corticalNeurons[neuronID].spines[i].state=1;
-              corticalNeurons[neuronID].spines[i].time=eventTime;
               break;
             }
           }
           if(!spineFound){
             corticalNeurons[neuronID].spines.push({
               id:pyram,
-              time:eventTime,
               state:1
             });
           }
@@ -900,23 +894,13 @@
             corticalNeurons[neuronID].synapses.push({  id:pyram,branch:bs, time:eventTime,  state:1   });
           }
           synapseCount=corticalNeurons[neuronID].synapses.length;
-          
-          //for short term memory halfing the branchesReq4Perception but this can get more sophisticated 
-          if(  (corticalNeurons[neuronID].shortTerm && (synapseCount> ( (branchesReq4Perception/2) -1) ))//easier to activate recently active
+          // at least branchesReq4Perception must be active at spines to reactivate a resting neuron except for the case of short term memory
+          // 2/3 of required branches useed for short term memory perception triggers but this can get more sophisticated - could be a test interface variable
+          if(  (corticalNeurons[neuronID].shortTerm && (synapseCount> ( ((branchesReq4Perception*2)/3)) )) //as in easier to activate recently active
               || synapseCount>branchesReq4Perception){    
-            if (debugIndex==neuronID){
-              var thisGuymayBeHot=1;
-            }    
-                   
-            corticalNeurons[neuronID].active=1;   //this here is the perceptive reflex    
-            corticalNeurons[neuronID].topDown=1;  
-            corticalNeurons[neuronID].time= eventTime;   
-            for(k=0;k<synapseCount;k++){
-              var ARCpyr=corticalNeurons[neuronID].synapses[k].id;
-              var ARCBr=corticalNeurons[neuronID].synapses[k].branch;              
-              assureARCactive(neuronID,ARCpyr,ARCBr);   
-     
-            }  
+            corticalNeurons[neuronID].active=1;   //the perceptive reflex    
+            corticalNeurons[neuronID].topDown=1;  //always top down
+            corticalNeurons[neuronID].time= eventTime;   //countdown for STM 
             for(k=0;k<synapseCount;k++){
               corticalNeurons[neuronID].synapses.pop();      
             }           
