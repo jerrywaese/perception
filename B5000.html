@@ -39,7 +39,7 @@
 
   <body onload="doBodyLoad();">
     <div class="page">
-      version 1.094a - Feb. 9, 2023  - 2048 branches per Pyramidal Neuron
+      version 1.094x - March 7, 2023  -  5000 branches per Pyramidal Neuron
       <main>
         <div id="leftside" >  
           <span id="OpticSpeedLayers">Visual High Speed Cortex Preprocess</span>
@@ -50,7 +50,7 @@
           <canvas id="processCanvas" width="300" height="300"></canvas>
         </div>
         <div id="rightside">
-          <a href="B5000.html"><b>(click to use 5000 branches & compare % perceptive reflex reactivation) </b></a>
+          
           <br/>
           <div id="description">
             A simulation of an image being preprocessed and then sensed, retained, and perceived 
@@ -104,7 +104,7 @@
               Note: Reactivation threshold for resting Neurons <br/>
               eg. the number of (ARC protein) connected synchronous spine activations neccessary to re-activate a resting neuron -<br/>
               the higher this number, the fewer original associated neurons in the memory engram will be reactivated from a sample.
-            </td><td><span id="PerceptionRequired" onclick="changePerceptionRequired();" title="Perception of original associated neurons requires a minimum of this many pyramidal spines - i.e. neural branch connections per cortical neuron.">7</span></td>
+            </td><td><span id="PerceptionRequired" onclick="changePerceptionRequired();" title="Perception of original associated neurons requires a minimum of this many pyramidal spines - i.e. neural branch connections per cortical neuron.">11</span></td>
             </tr> 
             <tr bgcolor="#eee">
               <td><button id="changeSequenceLength" onclick="changeSequenceLength();" title="Progressive Perception occurs in steps, and more steps reveal more of the holographic associated memory engram from a small sample stimulus. Too many steps create noise, enlisting too many pyramidal branches by the expansion of field interference.">Change perception Sequence length</button><br/>
@@ -138,7 +138,7 @@
           </tr>
         </table><br/><br/><br/><br/><br/><br/>
         Other Global Variables should be changed only at the code level as they affect the amount of memory the page requires,<br/>
-        such as the number of branches capable of linking Cortical neurons per Pyramidal neuron (2048 in this version),<br/>
+        such as the number of branches capable of linking Cortical neurons per Pyramidal neuron (5000 in this version),<br/>
         and the ratio of branching Pyramidal Neurons embedded in the Cortical Neuron Population (1 P per 5 C in this version).<br/>
         Based upon 300x300 cortical neurons = 90,000 there are 18,000 pyramidals with 36,864,000 total connections in this demo<br/><br/>
         <br/><br/><br/>
@@ -150,7 +150,7 @@
          <br/><br/><br/>
          (*) % gross perceptive reflex reactivation is a number that compares the active neuron count after perception with the active neuron count when the image is first encountered, it is not a figure related to pattern correspondence - merely a gross activation figure.  Additional activation will occur after learning several images and will be visible as screen hash, or dust in the background - indicative of cortical neurons of other engrams which share the same ARC protein spines.
          <br/><br/><br/><br/><br/><br/>
-         copyright © Jerry Waese 2022, 2023 <br/>
+        copyright © Jerry Waese 2022, 2023 <br/>
         
         </div>        
         <div id="under_input" class="enhance">
@@ -192,12 +192,12 @@
       var selectedImages=[];
       var currentSelectedImage=0;      
       var currentSelectedImageName="";
-      var nPyramidalBranches=2048;//preset per pNeuron enabling min 7 (variable) spines for cNeuron re-activation from pyramidal branches   (i.e. top down)
+      var nPyramidalBranches=5000;//2048;//preset per pNeuron enabling min 7 (variable) spines for cNeuron re-activation from pyramidal branches   (i.e. top down)
       var ratioCortical2Pyramidal=5;//was 5 for max pyramidalNeurons preset for ratio of corticalNeurons to pyramidalNeurons 3 is quite slow to initialize.
      
       var mustPerceive=0;// 
       
-      var branchesReq4Perception=7;    //used in tryPerception to promote a resting neuron to active state
+      var branchesReq4Perception=11;    //used in tryPerception to promote a resting neuron to active state
      
       var SpinesAdded=0;
       var corticalNeuronsActivated=0;
@@ -1027,7 +1027,7 @@
         processCtx = processCanvas.getContext('2d');
         initializeBrainScreen();  
        //document.getElementById("key1").innerHTML="Initializing Neurons Please Wait";
-        nowSay("Now creating a hundred thousand neurons and more than 36 million axon branches. Please wait a few more seconds.");            
+        nowSay("Now creating a hundred thousand neurons and about 88 million axon branches. Please wait a few more seconds.");            
         setTimeout(InitialActivationofCorticalNeurons,200);  
       }//end initialize function
 
