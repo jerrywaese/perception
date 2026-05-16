@@ -25,6 +25,9 @@ jobs:
       - name: Unfreeze bundler
         run: bundle config set frozen false
 
+      - name: Update dependencies
+        run: bundle update
+        
       - name: Build site with Jekyll
         run: bundle exec jekyll build --destination ./_site
         
