@@ -2,7 +2,8 @@ name: Build and deploy Jekyll site to GitHub Pages
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
   workflow_dispatch:
 
 permissions:
@@ -23,22 +24,4 @@ jobs:
 
       - name: Build site with Jekyll
         run: bundle exec jekyll build --destination ./_site
-        
-       - uses: actions/configure-pages@v5
-
-       - uses: actions/upload-pages-artifact@v4
-        with:
-          path: ./_site
-     
-
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - id: deployment
-        uses: actions/deploy-pages@v4
         
