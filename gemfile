@@ -1,0 +1,12 @@
+source "https://rubygems.org"
+
+gem "jekyll", "~> 4.3.0"
+gem "github-pages", "~> 232", group: :jekyll_plugins
+
+group :jekyll_plugins do
+  gem "jekyll-feed", "~> 0.12"
+end
+
+platforms :ruby do
+  gem "http_parser.rb", "~> 0.6.0"
+end
