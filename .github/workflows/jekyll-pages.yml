@@ -58,6 +58,9 @@ jobs:
         uses: actions/upload-pages-artifact@v3
         with:
           path: ./_site
+ 
+      - name: Wait for artifact to be available
+        run: sleep 10
 
       - name: Deploy to GitHub Pages
         id: deployment
