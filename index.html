@@ -1,14 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>Associative Engram Demo of Familiarity Reflex in Cerebral Cortex </title>
+    <title>Associative Engram Process Example </title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <meta name="Description" content="Consciousness, progressive perception, and associative memory modelling based upon Familiarity Reflex." />
-    <meta name="Keywords" content="associative brain wiring, memory, engrams, perception, association, familiarity" />
+    <meta name="Description" content="Consciousness, progressive perception, and associative memory modelling." />
+    <meta name="Keywords" content="associative brain wiring, memory, engrams, perception, association" />
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
-    <meta name="google-site-verification" content="hz_QHCIOgs99awVMror1KHtnZLncrIMNYHA8ih41fXA" />
     <style type="text/css">   
           body { width: 100%;height: 100%;}
           .page {  width: 95%;  height: 95%;  
@@ -40,7 +39,7 @@
 
   <body onload="doBodyLoad();">
     <div class="page">
-      version 1.099 - may 20, 2026  - pyramidal neuron quorum reveal on click of reactivated cortical neuron
+      version 1.0967 - may 16 2026  -  right click test refined
       <main>
         <div id="leftside" >  
           <span id="OpticSpeedLayers">Visual High Speed Cortex Preprocess</span>
@@ -51,13 +50,13 @@
           <canvas id="processCanvas" width="300" height="300"></canvas>
         </div>
         <div id="rightside">
-          <a href="B5000.html"><b>(click to use 5000 branches & compare % perceptive reflex reactivation) </b></a>
+          
           <br/>
           <div id="description">
-            A simulation of an image being preprocessed and then sensed, retained, and reflexively perceived 
+            A simulation of an image being preprocessed and then sensed, retained, and perceived 
             in a synchronous neural association network. 
             You can initiate perception from a square sample by clicking in the left Cortex Preprocess area. 
-            You can change the sensory input to any image in the row of images below the simulation. Short Term memory settings affect image overlapping. 
+            You can change the sensory input to any image in the row of images below the simulation. Short Term memory settings affect image overlapping from other test images. 
             Click inside Associative Cortex area to see active pyramidal axon branches coming <B>to</B> a (yellow) active neuron, or branches emerging <B>from</B> an activated pyramidal neuron (hidden among dense groups of neurons).   
             Global Variables (like the size of the test sample) can be edited below, including the preprocess matrix which affects images as they load. 
           </div>
@@ -105,7 +104,7 @@
               Note: Reactivation threshold for resting Neurons <br/>
               eg. the number of (ARC protein) connected synchronous spine activations neccessary to re-activate a resting neuron -<br/>
               the higher this number, the fewer original associated neurons in the memory engram will be reactivated from a sample.
-            </td><td><span id="PerceptionRequired" onclick="changePerceptionRequired();" title="Perception of original associated neurons requires a minimum of this many pyramidal spines - i.e. neural branch connections per cortical neuron.">7</span></td>
+            </td><td><span id="PerceptionRequired" onclick="changePerceptionRequired();" title="Perception of original associated neurons requires a minimum of this many pyramidal spines - i.e. neural branch connections per cortical neuron.">11</span></td>
             </tr> 
             <tr bgcolor="#eee">
               <td><button id="changeSequenceLength" onclick="changeSequenceLength();" title="Progressive Perception occurs in steps, and more steps reveal more of the holographic associated memory engram from a small sample stimulus. Too many steps create noise, enlisting too many pyramidal branches by the expansion of field interference.">Change perception Sequence length</button><br/>
@@ -139,21 +138,17 @@
           </tr>
         </table><br/><br/><br/><br/><br/><br/>
         Other Global Variables should be changed only at the code level as they affect the amount of memory the page requires,<br/>
-        such as the number of branches capable of linking Cortical neurons per Pyramidal neuron (2048 in this version),<br/>
+        such as the number of branches capable of linking Cortical neurons per Pyramidal neuron (5000 in this version),<br/>
         and the ratio of branching Pyramidal Neurons embedded in the Cortical Neuron Population (1 P per 5 C in this version).<br/>
         Based upon 300x300 cortical neurons = 90,000 there are 18,000 pyramidals with 36,864,000 total connections in this demo<br/><br/>
         <br/><br/><br/>
         This demo implements hypothalamic suppression modelling during image selection which suppresses *TOPDOWN* current active mental events (i.e. the perceptive reflex content) and enables more refined subsequent focussed recognition. (Focussing involves suppression of reflex perception).
         <br/><br/>
-        This work implements a simulation for some of the ideas suggested in my earlier paper DOI: 10.13140/RG.2.2.16508.82565 
-        <a href="https://www.researchgate.net/publication/389687536_Familiarity_-_The_Perceptive_Reflex" target="_blank">
-          describing associative memory formation and perception as reflexes.</a> 
+        
          <br/><br/><br/>
          (*) % gross perceptive reflex reactivation is a number that compares the active neuron count after perception with the active neuron count when the image is first encountered, it is not a figure related to pattern correspondence - merely a gross activation figure.  Additional activation will occur after learning several images and will be visible as screen hash, or dust in the background - indicative of cortical neurons of other engrams which share the same ARC protein spines.
-         <br/><br/><br/><br/><br/>
-          small image upload available via <a href="victor.html">this page</a>
-          <br/>
-         copyright © Jerry Waese 2022, 2023, 2024, 2025 <br/>
+         <br/><br/><br/><br/><br/><br/>
+        copyright © Jerry Waese 2022, 2023, 2024,2025,2026 <br/>
         
         </div>        
         <div id="under_input" class="enhance">
@@ -173,7 +168,7 @@
       </main>
     </div>
     <script type="text/javascript">
-      //© Jerry Waese 2022, 2023, 2024, 2025 all rights reserved
+      
     
       var corticalCanvas;
       var corticalCtx;
@@ -195,12 +190,12 @@
       var selectedImages=[];
       var currentSelectedImage=0;      
       var currentSelectedImageName="";
-      var nPyramidalBranches=2048;//preset per pNeuron enabling min 7 (variable) spines for cNeuron re-activation from pyramidal branches   (i.e. top down)
+      var nPyramidalBranches=5000;//2048;//preset per pNeuron enabling min 7 (variable) spines for cNeuron re-activation from pyramidal branches   (i.e. top down)
       var ratioCortical2Pyramidal=5;//was 5 for max pyramidalNeurons preset for ratio of corticalNeurons to pyramidalNeurons 3 is quite slow to initialize.
      
       var mustPerceive=0;// 
       
-      var branchesReq4Perception=7;    //used in tryPerception to promote a resting neuron to active state
+      var branchesReq4Perception=11;    //used in tryPerception to promote a resting neuron to active state
      
       var SpinesAdded=0;
       var corticalNeuronsActivated=0;
@@ -675,19 +670,20 @@
         else{//full branches
           for (var j=0;j<nPyramidalBranches;j++){
             if(pyramidalNeurons[id].branches[j].cNeuronId!=-1){
+              
               if(corticalNeurons[ [pyramidalNeurons[id].branches[j].cNeuronId] ].active &&
-                  pyramidalNeurons[id].active ){
-                  if(specific<0 || specific==pyramidalNeurons[id].branches[j].cNeuronId){
-                    corticalCtx.lineWidth = 5;
-                    corticalCtx.beginPath();
-                    if(!altcol){corticalCtx.strokeStyle = 'rgba(0,150,255,0.25)';}
-                    else{corticalCtx.strokeStyle = 'rgba(50,255,200,0.25)';}
-                    corticalCtx.moveTo(pyramidalNeurons[id].branches[j].x,pyramidalNeurons[id].branches[j].y);
-                    targx=pyramidalNeurons[id].x;
-                    targy=pyramidalNeurons[id].y;
-                    corticalCtx.lineTo(targx,targy);
-                    corticalCtx.stroke();
-                    corticalCtx.closePath();
+                pyramidalNeurons[id].active ){
+                if(specific<0 || specific==pyramidalNeurons[id].branches[j].cNeuronId){
+                  corticalCtx.lineWidth = 5;
+                  corticalCtx.beginPath();
+                  if(!altcol){corticalCtx.strokeStyle = 'rgba(0,150,255,0.25)';}
+                  else{corticalCtx.strokeStyle = 'rgba(50,255,200,0.25)';}
+                  corticalCtx.moveTo(pyramidalNeurons[id].branches[j].x,pyramidalNeurons[id].branches[j].y);
+                  targx=pyramidalNeurons[id].x;
+                  targy=pyramidalNeurons[id].y;
+                  corticalCtx.lineTo(targx,targy);
+                  corticalCtx.stroke();
+                  corticalCtx.closePath();
                 }
               }
             }
@@ -787,7 +783,7 @@
         var matching=0;
         for (var i=0;i<pyramidalNeurons.length; i++){
           if(pyramidalNeurons[i].x<x+6&&pyramidalNeurons[i].x>x-6&&pyramidalNeurons[i].y<y+6&&pyramidalNeurons[i].y>y-6){
-            showAxonBranchesOf(i,0,0);
+            showAxonBranchesOf(i,0,0,-1);
             matching++;
             foundPNs.push(i);
           }
@@ -917,16 +913,16 @@
           }          
         }
       }
-           
+
       function makeSureAllActivesAreYellow(){  
         simulateThalamicProjection("Making Pyramidal branch spines with synchronously active Cortical Neurons");
       }
       
       function backPropagate(){       //this is guts of perceive
-        //nowSay("Making Pyramidal branch spines with synchronously active Cortical Neurons");    
+        //nowSay("Making Pyramidal branch spines with synchronously active Cortical Neurons");       
         makeSureAllActivesAreYellow();
         convertyellowtored();
-        deactivateAllSpines(0);
+        deactivateAllSpines(0);///may 17 make sure that the reccently activated cortical neurons are red and that the next step uses the redness.
         activatePyramidalsUponBackPropagation();
         if(!mustPerceive){ //progressive perception
           setTimeout(showAllActivePyramidalBranchEnds,delayForFields); 
@@ -1040,7 +1036,7 @@
         processCtx = processCanvas.getContext('2d');
         initializeBrainScreen();  
        //document.getElementById("key1").innerHTML="Initializing Neurons Please Wait";
-        nowSay("Now creating a hundred thousand neurons and more than 36 million axon branches. Please wait a few more seconds.");            
+        nowSay("Now creating a hundred thousand neurons and about 88 million axon branches. Please wait a few more seconds.");            
         setTimeout(InitialActivationofCorticalNeurons,200);  
       }//end initialize function
 
@@ -1107,7 +1103,7 @@
                     var inText=document.getElementById("under_Cortex").innerHTML;
                    
                     if(inText.includes("Click above for Pyramidal branches from")){
-                      nowSay('from point x='+(mX)+' point y='+(mY)+ " pyram neuron(s) "+ getpyramidalNeuronAt(mX,mY));  
+                      nowSay('from point x='+(mX)+' point y='+(mY)+ " pyram neuron(s) "+ getpyramidalNeuronAt(mX,mY,-1));  
                     }
                     else {
                       nowSay('to point x='+(mX)+' point y='+(mY)+ " cortical neuron "+ getCorticalNeuronAt(mX,mY,1));  
@@ -1137,7 +1133,7 @@
                     var inText=document.getElementById("under_Cortex").innerHTML;
                    
                     if(inText.includes("Click above for Pyramidal branches from")){
-                      nowSay('from point x='+(mX)+' point y='+(mY)+ " pyram neuron(s) "+ getpyramidalNeuronAt(mX,mY));  
+                      nowSay('from point x='+(mX)+' point y='+(mY)+ " pyram neuron(s) "+ getpyramidalNeuronAt(mX,mY,-1));  
                     }
                     else {
                       nowSay('to point x='+(mX)+' point y='+(mY)+ " cortical neuron "+ getCorticalNeuronAt(mX,mY,1));  
@@ -1245,7 +1241,7 @@
                     for (var f=0; f<corticalNeurons[gridpoint].spines.length;f++){
                       var pyramidalNeuronId=corticalNeurons[gridpoint].spines[f].id;
                       if(corticalNeurons[gridpoint].spines[f].state){
-                           if(homing>0){
+                        if(homing>0){
                           showAxonBranchesOf(pyramidalNeuronId,0,1,gridpoint);
                         }
                         else{
@@ -1535,5 +1531,3 @@
      
   </body>
 </html>
-
-
