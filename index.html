@@ -917,9 +917,14 @@
           }          
         }
       }
+           
+      function makeSureAllActivesAreYellow(){  
+        simulateThalamicProjection("Making Pyramidal branch spines with synchronously active Cortical Neurons");
+      }
       
       function backPropagate(){       //this is guts of perceive
-        nowSay("Making Pyramidal branch spines with synchronously active Cortical Neurons");       
+        //nowSay("Making Pyramidal branch spines with synchronously active Cortical Neurons");    
+        makeSureAllActivesAreYellow();
         convertyellowtored();
         deactivateAllSpines(0);
         activatePyramidalsUponBackPropagation();
