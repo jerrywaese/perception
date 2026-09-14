@@ -12,19 +12,20 @@
           body { width: 100%;height: 100%;}
           .page {  width: 95%;  height: 95%;  
             font-family: Arial,Helvetica,sans-serif;  background-color: #ffffff;  top: 0px;  left: 0px;  position: absolute;}
-          #leftside{position: absolute;left: 25px; top: 25px;}
-          #rightside{position: absolute;left: 650px;top: 25px; margin-left: 10px; width: 600px; }
+          #leftside{position: absolute;left: 25px; top: 25px;height:95% ;}
+          #rightside{position: absolute;left: 650px;top: 25px; margin-left: 10px; width: 600px; height:95% ;}
           #info{position: absolute;left: 25px; top: 1150px; width:95%;margin:10px;}
           .enhance{background: yellow;}
           .ftbox{width:50px; float:left;}
           #messageArea{position: absolute;left: 10px; top: 250px; width:95%;margin:10px;}
+          #exampleArea{left: 10px; top: 450px; width:95%;margin:10px;}
           #imageToSense{ width:300px; position:absolute; left:25px;top:25px;}          
           #imageToSenseMask{ width:300px; position:absolute; left:25px;top:25px; z-index: 50;opacity: 50%;}
           #OpticSpeedLayers{ width:300px; position:absolute; left:25px;top:5px;}
           #corticalCanvas{ width:300px; position:absolute; left:325px;top:25px;z-index: 1;}
           #AssociativeLayers{ width:300px; position:absolute; left:325px;top:5px;}
           #processCanvas{width:300px; position:absolute; left:325px;top:25px;z-index: 5; opacity: 100%;display:none;}
-          #description{float:left;width:95%;margin:14px;height:100px;}
+          #description{float:left;width:95%;margin:14px;height:100%;}
           #dash{left: 50px; top:490px; position: absolute;  height:80px;} 
           #under_input{position: absolute;left: 50px; top: 360px; width:300px;height:20px;z-index: 20;display:none;}
           #under_Cortex{position: absolute;left: 350px; top: 360px; width:300px;height:20px;z-index: 20;display:none;}
@@ -39,7 +40,7 @@
 
   <body onload="doBodyLoad();">
     <div class="page">
-      version 1.0967 - may 16 2026  -  right click test refined
+      version 1.0974 - sept 14 2026  -  loads image from disk
       <main>
         <div id="leftside" >  
           <span id="OpticSpeedLayers">Visual High Speed Cortex Preprocess</span>
@@ -59,10 +60,54 @@
             You can change the sensory input to any image in the row of images below the simulation. Short Term memory settings affect image overlapping from other test images. 
             Click inside Associative Cortex area to see active pyramidal axon branches coming <B>to</B> a (yellow) active neuron, or branches emerging <B>from</B> an activated pyramidal neuron (hidden among dense groups of neurons).   
             Global Variables (like the size of the test sample) can be edited below, including the preprocess matrix which affects images as they load. 
-          </div>
-          <div id="messageArea">
-            <h2 id="mess" >hi</h2>
-          </div>
+         		<!-- Victor Senkevich's x-domain image load code : my injection start :) -->
+			<img id="userImage" src="clickhere.jpg" title="Click here to upload your image" 
+        onclick="document.querySelector('#getUserFile').click()" style="height: 56px;display: block;border: 4px solid darkorange;">
+      <input type="file" accept=".*" style="display:none;" id="getUserFile" onchange="
+                if (this.files.length == 0) {
+                    console.log('*** NO user file...');
+                    return
+                }
+                const selectedFile = this.files[0];
+                console.log('selectedFile name:' + selectedFile.name + ', size:' + selectedFile.size + ', type:' + selectedFile.type);
+                var fName = selectedFile.name
+                var fr = new FileReader();
+                fr.onload = function () {
+                    document.getElementById('userImage').src = fr.result;
+                    currentSelectedImageName = fName;
+                    clearProcessCtx();
+                    sensoryCanvas= document.getElementById('imageToSense');
+                    var img1 = new Image();
+                    img1.onload = function () {
+                      sensoryCtx = sensoryCanvas.getContext('2d');
+                      sensoryCtx.drawImage(img1, 0, 0,300,300); //resizing to 300x300
+                      nowSay('loaded'); 
+                      imgData = sensoryCtx.getImageData(0, 0, gridWidth, gridHeight);
+                      var data = imgData.data;          
+                      theDataLength=data.length;         
+                      setTimeout(imageProcess,delayMin);//always 
+                    };
+                    img1.src = fr.result;
+                    img1.crossOrigin = 'Anonymous';
+                }
+                fr.readAsDataURL(this.files[0]);
+                toggletopDownOnOff();
+    ">				
+		<!-- Victor Senkevich's xdomain code injection end :) -->
+
+            <div id="messageArea">
+              <h2 id="mess" >hi</h2> 
+              <div id="exampleArea">
+                 This revision reveals progressive or ramified Pyramidal Axon Branch activation of cortical neurons from columns <u>outside the sample area</u> but activated by perception in response to the sample and supported by extending the Cortical-Thalamic perception sequence length. 
+                 <img src="rightclick.png" width="99%"/>
+              </div>
+            </div>
+
+          </div>      
+        
+        </div>
+
+
           <div id="challenge">
             <h2 style="background-color: yellow; display:none;">The Challenge is to find where to click (sample) the left side image to produce the clearest image in the right side, and explain how you find the best sample for each of these 8 images - write me and I may send you a prize!</h2>
           </div>
@@ -72,8 +117,8 @@
           <table width="600">
             <tr bgcolor="#eee">
               <td>
-                <b>General Note about changing images: </b>If you change images faster than the short term memory effect, then expect some of the previous image to be recognized as well.
-                The default is 3000 milliseconds (which can be changed below) so initially wait 3 seconds before changing the image after choosing or testing a image to prevent inadvertant cortical neuron activation by previous actives (the STM potentiation effect).
+                <b>General Note about changing images: </b>If you change images faster than the short term memory effect (default 3000 milliseconds), then expect some of the previous image to be recognized as well.
+                Or use the local file load option to load image files and see how they work.
                 <div style="display:none">
                   <button id="topDownOnOff" onclick="toggletopDownOnOff();" title="If Top Down OFF (focussing) is pressed, Non-Sensory Signals are stopped But
                   Top Down ON resumes perception">Turn Top Down OFF</button>
@@ -148,7 +193,7 @@
          <br/><br/><br/>
          (*) % gross perceptive reflex reactivation is a number that compares the active neuron count after perception with the active neuron count when the image is first encountered, it is not a figure related to pattern correspondence - merely a gross activation figure.  Additional activation will occur after learning several images and will be visible as screen hash, or dust in the background - indicative of cortical neurons of other engrams which share the same ARC protein spines.
          <br/><br/><br/><br/><br/><br/>
-        copyright © Jerry Waese 2022, 2023, 2024,2025,2026 <br/>
+        copyright © Jerry Waese 2022, 2023, 2024, 2025, 2026<br/>
         
         </div>        
         <div id="under_input" class="enhance">
@@ -163,6 +208,7 @@
         <table id="imgDescriptor"><tr><td id="desc_0"class="isam"></td><td id="desc_1" class="isam"></td><td id="desc_2" class="isam"></td><td id="desc_3" class="isam"></td><td id="desc_4" class="isam"></td><td id="desc_5"class="isam"></td><td id="desc_6"class="isam"></td><td id="desc_7"class="isam"></td></tr></table>
         <div id="hidefieldcon">
           <button id="hideFields" title="This button displays the field interference overlay. " onclick="hideFields();">Show fields</button><br/>
+ 
           <button id="skipFields" title="If you skip fields the progressive perception is not as good." onclick="skipFields();">Skip fields</button> 
         </div>
       </main>
